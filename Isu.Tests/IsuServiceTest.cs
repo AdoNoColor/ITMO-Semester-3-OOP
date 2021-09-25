@@ -1,5 +1,7 @@
+using System;
 using Isu.Services;
 using Isu.Tools;
+using Isu.Classes;
 using NUnit.Framework;
 
 namespace Isu.Tests
@@ -12,13 +14,22 @@ namespace Isu.Tests
         public void Setup()
         {
             //TODO: implement
-            _isuService = null;
+            _isuService = new IsuService();
         }
 
         [Test]
         public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
         {
-            Assert.Fail();
+            Group group = _isuService.AddGroup("M3208", 30);
+            Student student = _isuService.AddStudent(group, "Maxim Ivanov");
+            if (group.Students.Contains(student) && student.GroupName == group)
+            {
+                Console.WriteLine("Passed");
+            }
+            else
+            {
+                Assert.Fail();
+            }
         }
 
         [Test]
@@ -26,7 +37,11 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-                
+                Group group = _isuService.AddGroup("M3208", 30);
+                for (int i = 0; i < 40; i++)
+                {
+                    _isuService.AddStudent(group, i.ToString());
+                }
             });
         }
 
@@ -35,7 +50,7 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-
+                _isuService.AddGroup("P2104", 30);
             });
         }
 
@@ -44,7 +59,18 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-
+                Group group = _isuService.AddGroup("3208", 30);
+                Student student = _isuService.AddStudent(group, "Max Ivanov");
+                Group newGroup = _isuService.AddGroup("M3202", 30);
+                _isuService.ChangeStudentGroup(student, newGroup);
+                if (!group.Students.Contains(student) && newGroup.Students.Contains(student))
+                {
+                    Console.WriteLine("Passed");
+                }
+                else
+                {
+                    throw new IsuException("Not Passed");
+                }
             });
         }
     }

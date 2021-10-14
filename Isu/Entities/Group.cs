@@ -26,7 +26,7 @@ namespace Isu.Entities
         private bool IsGroupNameCorrect(string name)
         {
             if (name.Length != 5) throw new IsuException("Name of the group does not follow certain rules. TIP: M3XYY");
-            int groupNumber = int.Parse(name[3..]);
+            var groupNumber =  name[3] * 10 + name[4];
             return name[0] == 'M' && name[1] == '3' && name[2] > 0 && name[2] < 5 && groupNumber > 0 &&
                    groupNumber < 100;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using Isu.Classes;
+using System.Linq;
+using Isu.Entities;
 using Isu.Tools;
 
 namespace Isu.Services
@@ -18,7 +19,7 @@ namespace Isu.Services
 
         public Student AddStudent(Group @group, string name)
         {
-            if (Group.MaxStudents >= @group.Students.Count)
+            if (group.MaxStudents >= @group.Students.Count)
             {
                 throw new IsuException($"{@group.GroupName} is fully packed");
             }
@@ -27,35 +28,17 @@ namespace Isu.Services
             @group.Students.Add(student);
             _allStudents.Add(student);
             student.GroupName = @group;
-
-            // student.CourseNumber;
             return student;
         }
 
         public Student GetStudent(int id)
         {
-            foreach (Student student in _allStudents)
-            {
-                if (id.Equals(student.Id))
-                {
-                    return student;
-                }
-            }
-
-            return null;
+            return _allStudents.FirstOrDefault(student => id.Equals(student.Id));
         }
 
         public Student FindStudent(string name)
         {
-            foreach (Student student in _allStudents)
-            {
-                if (name.Equals(student.Name))
-                {
-                    return student;
-                }
-            }
-
-            return null;
+            return _allStudents.Find(student => name == student.Name);
         }
 
         public List<Student> FindStudents(string groupName)
@@ -65,57 +48,26 @@ namespace Isu.Services
 
         public List<Student> FindStudents(CourseNumber courseNumber)
         {
-            var tempListOfStudents = new List<Student>();
-            foreach (Student student in _allStudents)
-            {
-                if (courseNumber.Equals(student.Course))
-                {
-                    tempListOfStudents.Add(student);
-                }
-            }
-
-            return tempListOfStudents;
+            return _allStudents.Where(student => courseNumber.Equals(student.Course)).ToList();
         }
 
         public Group FindGroup(string groupName)
         {
-            foreach (Group @group in _allGroups)
-            {
-                if (groupName.Equals(@group.GroupName))
-                {
-                    return @group;
-                }
-            }
-
-            return null;
+            return _allGroups.FirstOrDefault(@group => groupName.Equals(@group.GroupName));
         }
 
         public List<Group> FindGroups(CourseNumber courseNumber)
-            {
-                var tempListOfGroups = new List<Group>();
-                foreach (Group group in _allGroups)
-                {
-                    if (courseNumber.Equals(group.Course))
-                    {
-                        tempListOfGroups.Add(group);
-                    }
-                }
-
-                return tempListOfGroups;
-            }
+        {
+            return _allGroups.Where(@group => courseNumber.Equals(@group.Course)).ToList();
+        }
 
         public void ChangeStudentGroup(Student student, Group newGroup)
             {
-                if (newGroup.Students.Count < Group.MaxStudents)
-                {
-                    student.GroupName.Students.Remove(student);
-                    newGroup.Students.Add(student);
-                    student.GroupName = newGroup;
-                }
-                else
-                {
+                if (newGroup.Students.Count >= newGroup.MaxStudents)
                     throw new IsuException($"{newGroup.GroupName} is fully packed");
-                }
+                student.GroupName.Students.Remove(student);
+                newGroup.Students.Add(student);
+                student.GroupName = newGroup;
             }
         }
     }

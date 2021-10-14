@@ -1,7 +1,7 @@
 using System;
 using Isu.Services;
 using Isu.Tools;
-using Isu.Classes;
+using Isu.Entities;
 using NUnit.Framework;
 
 namespace Isu.Tests
@@ -22,14 +22,7 @@ namespace Isu.Tests
         {
             Group group = _isuService.AddGroup("M3208", 30);
             Student student = _isuService.AddStudent(group, "Maxim Ivanov");
-            if (group.Students.Contains(student) && student.GroupName == group)
-            {
-                Console.WriteLine("Passed");
-            }
-            else
-            {
-                Assert.Fail();
-            }
+            Assert.Contains(student, group.Students);
         }
 
         [Test]

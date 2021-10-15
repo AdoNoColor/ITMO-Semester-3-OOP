@@ -20,9 +20,12 @@ namespace Isu.Tests
         [Test]
         public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
         {
-            Group group = _isuService.AddGroup("M3208", 30);
-            Student student = _isuService.AddStudent(group, "Maxim Ivanov");
-            Assert.Contains(student, group.Students);
+            Assert.Catch<IsuException>(() =>
+            {
+                Group group = _isuService.AddGroup("M3208", 30);
+                Student student = _isuService.AddStudent(group, "Maxim Ivanov");
+                Assert.Contains(student, group.Students);
+            });
         }
 
         [Test]

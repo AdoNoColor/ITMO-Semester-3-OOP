@@ -26,8 +26,7 @@ namespace Isu.Entities
         private bool IsGroupNameCorrect(string name)
         {
             if (name?.Length != 5) return false;
-            int groupNumber = (int.Parse(name[3].ToString()) * 10) + int.Parse(name[4].ToString());
-            return name[0] == 'M' && name[1] == '3' && int.Parse(name[2].ToString()) >= 1 && int.Parse(name[2].ToString()) <= 4 && groupNumber >= 0 && groupNumber <= 99;
+            return name[0] == 'M' && name[1] == '3' && int.Parse(name[2].ToString()) >= 1 && int.Parse(name[2].ToString()) <= 4 && int.Parse(name[3].ToString()) >= 0 && int.Parse(name[3].ToString()) <= 9 && int.Parse(name[4].ToString()) >= 0 && int.Parse(name[4].ToString()) <= 9 && name[3..] != "00";
         }
     }
 }

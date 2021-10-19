@@ -12,22 +12,26 @@ namespace Isu.Services
 
         public Group AddGroup(string name, int maxStudents)
         {
-            var @group = new Group(name, maxStudents);
-            _allGroups.Add(@group);
-            return @group;
+            var group = new Group(name, maxStudents);
+            _allGroups.Add(group);
+            return group;
         }
 
-        public Student AddStudent(Group @group, string name)
+        public Student AddStudent(Group group, string name)
         {
-            if (group.MaxStudents >= @group.Students.Count)
+            if (group == null)
             {
-                throw new IsuException($"{@group.GroupName} is fully packed");
+                throw new IsuException("There is no group like that");
             }
 
-            var student = new Student(name);
-            @group.Students.Add(student);
+            if (group.MaxStudents <= group.Students.Count)
+            {
+                throw new IsuException($"{group.GroupName} is fully packed");
+            }
+
+            var student = new Student(name, group);
+            group.Students.Add(student);
             _allStudents.Add(student);
-            student.GroupName = @group;
             return student;
         }
 
@@ -53,21 +57,21 @@ namespace Isu.Services
 
         public Group FindGroup(string groupName)
         {
-            return _allGroups.FirstOrDefault(@group => groupName.Equals(@group.GroupName));
+            return _allGroups.FirstOrDefault(group => groupName.Equals(group.GroupName));
         }
 
         public List<Group> FindGroups(CourseNumber courseNumber)
         {
-            return _allGroups.Where(@group => courseNumber.Equals(@group.Course)).ToList();
+            return _allGroups.Where(group => courseNumber.Equals(group.Course)).ToList();
         }
 
         public void ChangeStudentGroup(Student student, Group newGroup)
-            {
-                if (newGroup.Students.Count >= newGroup.MaxStudents)
-                    throw new IsuException($"{newGroup.GroupName} is fully packed");
-                student.GroupName.Students.Remove(student);
-                newGroup.Students.Add(student);
-                student.GroupName = newGroup;
-            }
+        {
+            if (newGroup.Students.Count >= newGroup.MaxStudents)
+                throw new IsuException($"{newGroup.GroupName} is fully packed");
+            student.GroupName.Students.Remove(student);
+            newGroup.Students.Add(student);
+            student.GroupName = newGroup;
         }
     }
+}

@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "+RXJb9Fiz3cbfneIQlA6mvqhvLuMIu4QMIAQCpDEFys+iw4JgYiqyjXlyGQYC3v//wI3KsEFyxhwZH/SoRckzw==",
+  "dgSpecHash": "IOUqJ0CcB23Nyn7SDh+EnoNhQJbvbAVPP8bdzoVI5jtoxA3xTsnjXeCQ2FbAqII4mIThYSplEuMglpvMefn/0Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\hemke\\Desktop\\AdoNoColor-lab0\\Isu\\Isu.csproj",
+  "projectFilePath": "C:\\Users\\Иванов\\Desktop\\AdoNoColor-lab0\\Isu\\Isu.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\hemke\\.nuget\\packages\\stylecop.analyzers\\1.1.118\\stylecop.analyzers.1.1.118.nupkg.sha512",
-    "C:\\Users\\hemke\\.nuget\\packages\\microsoft.netcore.app.ref\\3.1.0\\microsoft.netcore.app.ref.3.1.0.nupkg.sha512",
-    "C:\\Users\\hemke\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.1.0\\microsoft.windowsdesktop.app.ref.3.1.0.nupkg.sha512",
-    "C:\\Users\\hemke\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.10\\microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",
-    "C:\\Users\\hemke\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.17\\microsoft.netcore.app.host.win-x64.3.1.17.nupkg.sha512"
+    "C:\\Users\\Иванов\\.nuget\\packages\\stylecop.analyzers\\1.1.118\\stylecop.analyzers.1.1.118.nupkg.sha512",
+    "C:\\Users\\Иванов\\.nuget\\packages\\microsoft.netcore.app.ref\\3.1.0\\microsoft.netcore.app.ref.3.1.0.nupkg.sha512",
+    "C:\\Users\\Иванов\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.1.0\\microsoft.windowsdesktop.app.ref.3.1.0.nupkg.sha512",
+    "C:\\Users\\Иванов\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.10\\microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",
+    "C:\\Users\\Иванов\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.20\\microsoft.netcore.app.host.win-x64.3.1.20.nupkg.sha512"
   ],
   "logs": []
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Isu.Tools;
 
 namespace Isu.Entities
@@ -26,11 +25,9 @@ namespace Isu.Entities
 
         private bool IsGroupNameCorrect(string name)
         {
-            if (name?.Length != 5) throw new IsuException("Name of the group does not follow certain rules. TIP: M3XYY");
+            if (name?.Length != 5) return false;
             int groupNumber = (int.Parse(name[3].ToString()) * 10) + int.Parse(name[4].ToString());
-            return name?[0] == 'M' && name?[1] == '3' &&
-                   Enumerable.Range(1, 4).Contains(int.Parse(name[2].ToString())) &&
-                   Enumerable.Range(0, 99).Contains(groupNumber);
+            return name[0] == 'M' && name[1] == '3' && int.Parse(name[2].ToString()) >= 1 && int.Parse(name[2].ToString()) <= 4 && groupNumber >= 0 && groupNumber <= 99;
         }
     }
 }

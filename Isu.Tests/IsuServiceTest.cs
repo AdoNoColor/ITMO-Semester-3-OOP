@@ -20,12 +20,9 @@ namespace Isu.Tests
         [Test]
         public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
         {
-            Assert.Catch<IsuException>(() =>
-            {
-                Group group = _isuService.AddGroup("M3208", 30);
-                Student student = _isuService.AddStudent(group, "Maxim Ivanov");
-                Assert.Contains(student, group.Students);
-            });
+            Group group = _isuService.AddGroup("M3208", 30);
+            Student student = _isuService.AddStudent(group, "Maxim Ivanov");
+            Assert.Contains(student, group.Students);
         }
 
         [Test]
@@ -53,21 +50,11 @@ namespace Isu.Tests
         [Test]
         public void TransferStudentToAnotherGroup_GroupChanged()
         {
-            Assert.Catch<IsuException>(() =>
-            {
-                Group group = _isuService.AddGroup("3208", 30);
-                Student student = _isuService.AddStudent(group, "Max Ivanov");
-                Group newGroup = _isuService.AddGroup("M3202", 30);
-                _isuService.ChangeStudentGroup(student, newGroup);
-                if (!group.Students.Contains(student) && newGroup.Students.Contains(student))
-                {
-                    Console.WriteLine("Passed");
-                }
-                else
-                {
-                    throw new IsuException("Not Passed");
-                }
-            });
+            Group group = _isuService.AddGroup("M3208", 30);
+            Student student = _isuService.AddStudent(group, "Max Ivanov");
+            Group newGroup = _isuService.AddGroup("M3202", 30);
+            _isuService.ChangeStudentGroup(student, newGroup);
+            Assert.IsTrue(!group.Students.Contains(student) && newGroup.Students.Contains(student));
         }
     }
 }

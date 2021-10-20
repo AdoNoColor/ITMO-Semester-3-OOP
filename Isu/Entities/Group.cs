@@ -15,7 +15,7 @@ namespace Isu.Entities
             MaxStudents = maxStudents;
             Students = new List<Student>();
             GroupName = groupName;
-            Course = int.Parse(char.ToString(groupName[2]));
+            Course = (CourseNumber)int.Parse(string.Empty + groupName[2]);
         }
 
         public int MaxStudents { get; private set; }

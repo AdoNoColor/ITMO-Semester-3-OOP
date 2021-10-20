@@ -15,7 +15,7 @@ namespace Isu.Entities
             MaxStudents = maxStudents;
             Students = new List<Student>();
             GroupName = groupName;
-            Course = (CourseNumber)groupName[2];
+            Course = Convert.ToInt32(groupName[2]);
         }
 
         public int MaxStudents { get; private set; }

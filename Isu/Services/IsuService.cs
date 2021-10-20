@@ -65,7 +65,7 @@ namespace Isu.Services
             return _allGroups.Where(group => courseNumber.Equals(group.Course)).ToList();
         }
 
-		public void ChangeStudentGroup(Student student, Group newGroup)
+        public void ChangeStudentGroup(Student student, Group newGroup)
         {
             if (newGroup is null) throw new IsuException($"{newGroup.GroupName} does not exist");
             if (newGroup.Students.Count >= newGroup.MaxStudents) throw new IsuException($"{newGroup.GroupName} is fully packed");

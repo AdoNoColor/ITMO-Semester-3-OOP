@@ -17,6 +17,7 @@
             GroupName = groupName;
             Name = name;
             Id = _id;
+            Course = groupName.Course;
         }
 
         public int Id { get; }

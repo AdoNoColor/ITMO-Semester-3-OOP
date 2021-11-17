@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using Isu.Tools;
-
 namespace Isu.Entities
 {
     public class Group
@@ -15,12 +15,12 @@ namespace Isu.Entities
             MaxStudents = maxStudents;
             Students = new List<Student>();
             GroupName = groupName;
-            Course = (CourseNumber)int.Parse(string.Empty + groupName[2]);
+            Course = (CourseNumber)int.Parse(string.Empty + groupName[2]) - 1;
         }
 
-        public int MaxStudents { get; private set; }
+        public int MaxStudents { get; set; }
         public List<Student> Students { get; }
-        public string GroupName { get; }
+        public string GroupName { get; set; }
         public CourseNumber Course { get; }
 
         private bool IsGroupNameCorrect(string name)

@@ -22,10 +22,10 @@ namespace Shops.Tests
             Shop shop = _shopService.RegisterShop("234", "523");
             Product banana =_shopService.RegisterProduct("Banana");
             Product apple = _shopService.RegisterProduct("Apple");
-            _shopService.ProductToDeliver(banana, 50, 40);
-            _shopService.ProductToDeliver(apple, 70, 100);
+            _shopService.AddProductToDeliver(banana, 50, 40);
+            _shopService.AddProductToDeliver(apple, 70, 100);
             _shopService.DeliverTo(shop);
-            Assert.IsTrue(shop.BoolFindProduct(banana) && shop.BoolFindProduct(apple));
+            Assert.IsTrue(shop.ProductExists(banana) && shop.ProductExists(apple));
         }
 
         [Test]
@@ -34,8 +34,8 @@ namespace Shops.Tests
             Shop shop = _shopService.RegisterShop("234", "523");
             Product banana =_shopService.RegisterProduct("Banana");
             Product apple = _shopService.RegisterProduct("Apple");
-            _shopService.ProductToDeliver(banana, 50, 40);
-            _shopService.ProductToDeliver(apple, 70, 100);
+            _shopService.AddProductToDeliver(banana, 50, 40);
+            _shopService.AddProductToDeliver(apple, 70, 100);
             _shopService.DeliverTo(shop);
             _shopService.ChangePrice(shop, banana, 55);
             Assert.IsFalse(50 == shop.FindProduct(banana).Price);
@@ -46,17 +46,20 @@ namespace Shops.Tests
         public void ProfitSearch()
         {
             Shop shop = _shopService.RegisterShop("234", "523");
-            Product banana =_shopService.RegisterProduct("Banana");
+            Product banana = _shopService.RegisterProduct("Banana");
             Product apple = _shopService.RegisterProduct("Apple");
-            _shopService.ProductToDeliver(banana, 50, 2);
-            _shopService.ProductToDeliver(apple, 70, 2);
+            _shopService.AddProductToDeliver(banana, 50, 2);
+            _shopService.AddProductToDeliver(apple, 70, 2);
             _shopService.DeliverTo(shop);
+
+            Shop shop_2 = _shopService.RegisterShop("432", "123");
+            _shopService.AddProductToDeliver(banana, 70, 2);
+            _shopService.AddProductToDeliver(apple, 70, 2);
+            _shopService.DeliverTo(shop_2);
+
+            _shopService.AddProductToSearch(apple, 1);
             _shopService.AddProductToSearch(banana, 1);
-            _shopService.AddProductToSearch(banana, 5);
-            Assert.Catch<ShopException>(() =>
-            {
-                _shopService.SearchProfitableDeal();
-            });
+            Assert.AreEqual(120, _shopService.SearchProfitableDeal());
         } 
         
         [Test]
@@ -65,10 +68,10 @@ namespace Shops.Tests
             Shop shop = _shopService.RegisterShop("234", "523");
             Product banana = _shopService.RegisterProduct("Banana");
             Product apple = _shopService.RegisterProduct("Apple");
-            _shopService.ProductToDeliver(banana, 50, 40);
-            _shopService.ProductToDeliver(apple, 70, 100);
+            _shopService.AddProductToDeliver(banana, 50, 40);
+            _shopService.AddProductToDeliver(apple, 70, 100);
             _shopService.DeliverTo(shop);
-            var bob = new Customer(240, 10);
+            var bob = new Customer(240);
             bob.AddToWishlist(apple, 2);
             bob.AddToWishlist(banana, 3);
             Assert.Catch<ShopException>(() =>

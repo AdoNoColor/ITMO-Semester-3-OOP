@@ -2,7 +2,7 @@
 {
     public class ProductExtra : Product
     {
-        public ProductExtra(string name, uint id, int quantity, int price)
+        public ProductExtra(string name, uint id, int quantity, decimal price)
             : base(name)
         {
             Id = id;
@@ -10,7 +10,14 @@
             Price = price;
         }
 
-        public int Price { get; set; }
+        public ProductExtra(string name, uint id, int quantity)
+            : base(name)
+        {
+            Id = id;
+            Quantity = quantity;
+        }
+
+        public decimal Price { get; set; }
         public new uint Id { get; }
         public int Quantity { get; set;  }
     }

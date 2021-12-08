@@ -1,23 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using Shops.Tools;
 
 namespace Shops.Entities
 {
     public class Customer
     {
-        private List<Tuple<uint, int>> _wishlist = new List<Tuple<uint, int>>();
-        public Customer(int balance, uint id)
+        private static uint _id = 0;
+        private List<ProductExtra> _wishlist = new List<ProductExtra>();
+        public Customer(int balance)
         {
+            _id++;
             Balance = balance;
-            Id = id;
+            Id = _id;
         }
 
-        public int Balance { get; set; }
+        public decimal Balance { get; private set; }
         private uint Id { get; }
+
+        public void Payment(decimal price)
+        {
+            if (price < Balance)
+                throw new ShopException("Not enough money!");
+            Balance -= price;
+        }
 
         public void AddToWishlist(Product product, int quantity)
         {
-            _wishlist.Add(Tuple.Create(product.Id, quantity));
+            var foundProduct = new ProductExtra(product.Name, product.Id, quantity);
+            _wishlist.Add(foundProduct);
         }
 
         public void DeleteFromWishlist(int i)
@@ -30,14 +41,14 @@ namespace Shops.Entities
             _wishlist.Clear();
         }
 
-        public uint GetItemFromWishList(int i)
+        public uint GetItemIdFromWishList(int i)
         {
-            return _wishlist[i].Item1;
+            return _wishlist[i].Id;
         }
 
         public int GetItemQuantityFromWishList(int i)
         {
-            return _wishlist[i].Item2;
+            return _wishlist[i].Quantity;
         }
 
         public int GetWishlistQuantity()

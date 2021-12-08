@@ -22,21 +22,24 @@ namespace Shops.Entities
 
         public void AddInStock(ProductExtra product)
         {
-            foreach (ProductExtra item in _stock.Where(item => product.Id == item.Id))
+            ProductExtra foundProduct = FindProduct(product);
+
+            if (foundProduct != null)
             {
-                item.Price = product.Price;
-                item.Quantity += product.Quantity;
+                foundProduct.Price = product.Price;
+                foundProduct.Quantity += product.Quantity;
+                return;
             }
 
             _stock.Add(product);
         }
 
-        public bool BoolFindProduct(uint productId)
+        public bool ProductExists(uint productId)
         {
             return _stock.Any(product => product.Id == productId);
         }
 
-        public bool BoolFindProduct(Product product)
+        public bool ProductExists(Product product)
         {
             return _stock.Any(item => item.Id == product.Id);
         }
@@ -46,40 +49,25 @@ namespace Shops.Entities
             return _stock.FirstOrDefault(item => item.Id == product.Id);
         }
 
-        public int ProductPrice(uint productId)
+        public void ChangeProductPrice(uint productId, decimal newPrice)
         {
-            foreach (ProductExtra product in _stock.Where(product => productId == product.Id))
-            {
-                return product.Price;
-            }
-
-            throw new ShopException("No product like this!");
-        }
-
-        public void ChangeProductPrice(uint productId, int newPrice)
-        {
-            foreach (ProductExtra t in _stock.Where(t => t.Id == productId))
-            {
-                t.Price = newPrice;
-                return;
-            }
-
-            throw new ShopException("No shop with the ID like that!");
+            ProductExtra foundProduct = FindProduct(productId);
+            if (foundProduct == null)
+                throw new ShopException("No shop with the ID like that!");
+            foundProduct.Price = newPrice;
         }
 
         public ProductExtra GetItemFromStock(int i)
         {
-            if (_stock[i] == null)
-            {
+            if (_stock[i] == null && i > _stock.Count)
                 throw new ShopException("No item like this");
-            }
 
             return _stock[i];
         }
 
         public void ChangeItemQuantity(int i, int quantity)
         {
-            if (_stock[i] == null)
+            if (_stock[i] == null && i > _stock.Count)
             {
                 throw new ShopException("No item like this");
             }

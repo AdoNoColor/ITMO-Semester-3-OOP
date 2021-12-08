@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Shops.Entities;
 using Shops.Tools;
@@ -11,7 +10,7 @@ namespace Shops.Services
         private readonly List<Shop> _shops = new List<Shop>();
         private readonly List<Product> _products = new List<Product>();
         private readonly List<ProductExtra> _deliver = new List<ProductExtra>();
-        private readonly List<Tuple<uint, int>> _package = new List<Tuple<uint, int>>();
+        private readonly List<ProductExtra> _package = new List<ProductExtra>();
 
         public Shop RegisterShop(string address, string name)
         {
@@ -38,21 +37,20 @@ namespace Shops.Services
             return product;
         }
 
-        public void ProductToDeliver(Product product, int price, int quantity)
+        public void AddProductToDeliver(Product product, decimal price, int quantity)
         {
             Product found = _products.Find(item => item.Id == product.Id);
-            if (found == null) throw new ShopException("No product like that!");
+            if (found == null)
+                throw new ShopException("No product like that!");
+            foreach (ProductExtra item in _deliver.Where(item => item.Id == product.Id))
             {
-                foreach (ProductExtra item in _deliver.Where(item => item.Id == product.Id))
-                {
-                    item.Price = price;
-                    item.Quantity = quantity;
-                    return;
-                }
-
-                var productExtra = new ProductExtra(found.Name, found.Id, quantity, price);
-                _deliver.Add(productExtra);
+                item.Price = price;
+                item.Quantity = quantity;
+                return;
             }
+
+            var productExtra = new ProductExtra(found.Name, found.Id, quantity, price);
+            _deliver.Add(productExtra);
         }
 
         public void DeliverTo(Shop shop)
@@ -65,7 +63,7 @@ namespace Shops.Services
             _deliver.Clear();
         }
 
-        public void ChangePrice(Shop shop, Product product, int newPrice)
+        public void ChangePrice(Shop shop, Product product, decimal newPrice)
         {
             foreach (Shop item in _shops)
             {
@@ -82,57 +80,45 @@ namespace Shops.Services
 
         public void AddProductToSearch(Product product, int quantity)
         {
-            foreach (Product item in _products)
-            {
-                if (item.Id == product.Id)
-                    _package.Add(Tuple.Create(item.Id, quantity));
-                return;
-            }
-
-            throw new ShopException("No product with the ID like that!");
+            if (_products.All(item => item.Id != product.Id))
+                throw new ShopException("No product with the ID like that!");
+            var foundProduct = new ProductExtra(product.Name, product.Id, quantity);
+            _package.Add(foundProduct);
         }
 
-        /*public void RemoveAllProductsToSearch()
-        {
-            _package.Clear();
-        }*/
-
-        public int SearchProfitableDeal()
+        public decimal SearchProfitableDeal()
         {
             if (_package.Count == 0)
             {
                 throw new ShopException("No products to search!");
             }
 
-            int totalAmount = int.MaxValue;
+            decimal totalAmount = decimal.MaxValue;
+
             foreach (Shop shop in _shops)
             {
-                uint productQuantity = 0;
-                foreach (Tuple<uint, int> unused in _package.Where(t => shop.BoolFindProduct(t.Item1) && shop.FindProduct(t.Item1).Quantity >= t.Item2))
+                int productQuantity = 0;
+
+                foreach (ProductExtra unused in _package.Where(t => shop.ProductExists(t.Id) && shop.FindProduct(t.Id).Quantity >= t.Quantity))
                 {
                     productQuantity++;
                 }
 
-                if (productQuantity != _package.Count) throw new ShopException("Not enough products or products don't exist!");
-                {
-                    int currentTotalAmount = 0;
-                    foreach ((uint item1, int item2) in _package)
-                    {
-                        currentTotalAmount += shop.ProductPrice(item1) * item2;
-                        if (currentTotalAmount < totalAmount)
-                        {
-                            totalAmount = currentTotalAmount;
-                        }
-                    }
-                }
+                if (productQuantity != _package.Count)
+                    throw new ShopException("Not enough products or products don't exist!");
+
+                decimal currentTotalAmount = _package.Where(product =>
+                    product.Quantity <= shop.FindProduct(product.Id).Quantity).
+                    Sum(product => shop.FindProduct(product.Id).Price * product.Quantity);
+
+                if (currentTotalAmount < totalAmount)
+                    totalAmount = currentTotalAmount;
             }
 
-            if (totalAmount != int.MaxValue)
-            {
-                return totalAmount;
-            }
+            if (totalAmount == decimal.MaxValue)
+                throw new ShopException("Something ain't right!");
 
-            throw new ShopException("Something ain't right!");
+            return totalAmount;
         }
 
         public void BuyProducts(Customer customer, Shop shop)
@@ -141,7 +127,7 @@ namespace Shops.Services
             {
                 for (int j = 0; j < shop.StockQuantity(); j++)
                 {
-                    if (customer.GetItemFromWishList(i) == shop.GetItemFromStock(j).Id &&
+                    if (customer.GetItemIdFromWishList(i) == shop.GetItemFromStock(j).Id &&
                         customer.GetItemQuantityFromWishList(i) <= shop.GetItemFromStock(j).Quantity)
                     {
                         if (customer.Balance - (shop.GetItemFromStock(j).Price * customer.GetItemQuantityFromWishList(i)) < 0)
@@ -149,7 +135,7 @@ namespace Shops.Services
                             throw new ShopException("Not enough money!");
                         }
 
-                        customer.Balance -= shop.GetItemFromStock(j).Price * customer.GetItemQuantityFromWishList(i);
+                        customer.Payment(shop.GetItemFromStock(j).Price * customer.GetItemQuantityFromWishList(i));
                         shop.ChangeItemQuantity(j, customer.GetItemQuantityFromWishList(i));
                     }
                 }

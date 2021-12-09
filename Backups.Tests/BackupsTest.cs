@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Backups.Algorithms;
 using Backups.Entities;
 using Backups.Repositories;
@@ -25,13 +26,13 @@ namespace Backups.Tests
             
             var expectedResult = new List<string>
             {
-                @"arc_1.zip\123.txt",
-                @"arc_1.zip\321.txt"
+                @"arc_1.zip" + Path.DirectorySeparatorChar + "123.txt",
+                @"arc_1.zip" + Path.DirectorySeparatorChar + "321.txt"
             };
             Assert.AreEqual(expectedResult, rep.RestorePoints[0].Storages);
             
             expectedResult.Clear();
-            expectedResult.Add(@"arc_2.zip\123.txt");
+            expectedResult.Add(@"arc_2.zip" + Path.DirectorySeparatorChar + "123.txt");
             Assert.AreEqual(expectedResult, rep.RestorePoints[1].Storages);
         }
 
@@ -52,13 +53,13 @@ namespace Backups.Tests
             
             var expectedResult = new List<string>
             {
-                @"123.txt_1.zip\123.txt",
-                @"321.txt_1.zip\321.txt"
+                @"123.txt_1.zip" + Path.DirectorySeparatorChar + "123.txt",
+                @"321.txt_1.zip" + Path.DirectorySeparatorChar + "321.txt"
             };
             Assert.AreEqual(expectedResult, rep.RestorePoints[0].Storages);
             
             expectedResult.Clear();
-            expectedResult.Add(@"123.txt_2.zip\123.txt");
+            expectedResult.Add(@"123.txt_2.zip" + Path.DirectorySeparatorChar + "123.txt");
             Assert.AreEqual(expectedResult, rep.RestorePoints[1].Storages);
         }
     }

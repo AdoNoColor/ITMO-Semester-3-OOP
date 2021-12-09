@@ -19,10 +19,6 @@ namespace Backups.Tests
             backupJob.Execute();
             Assert.AreEqual(2, backupJob.JobObjects.Count);
             Assert.AreEqual(1, rep.RestorePoints.Count);
-            Assert.Catch<BackupsException>(() =>
-            {
-                backupJob.AddObject(@"C:\Users\Иванов\ayo\2456.txt");
-            });
             backupJob.DeleteObject(@"C:\Users\Иванов\ayo\321.txt");
             backupJob.Execute();
             Assert.AreEqual(1, backupJob.JobObjects.Count);

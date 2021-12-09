@@ -24,8 +24,6 @@ namespace Backups.Entities
 
         public void DeleteObject(string objectName)
         {
-            if (objectName is null)
-                throw new BackupsException("Invalid!");
             JobObjects.Remove(objectName);
         }
 

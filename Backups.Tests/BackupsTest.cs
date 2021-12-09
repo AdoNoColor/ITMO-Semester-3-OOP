@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Backups.Algorithms;
 using Backups.Entities;
 using Backups.Repositories;
-using Backups.Tools;
 using NUnit.Framework;
 
 namespace Backups.Tests
@@ -14,12 +13,12 @@ namespace Backups.Tests
         {
             var rep = new GitRepository();
             var backupJob = new BackupJob(rep, new SingleStorage());
-            backupJob.AddObject(@"ayo\123.txt");
-            backupJob.AddObject(@"ayo\321.txt");
+            backupJob.AddObject(@"123.txt");
+            backupJob.AddObject(@"321.txt");
             backupJob.Execute();
             Assert.AreEqual(2, backupJob.JobObjects.Count);
             Assert.AreEqual(1, rep.RestorePoints.Count);
-            backupJob.DeleteObject(@"ayo\321.txt");
+            backupJob.DeleteObject(@"321.txt");
             backupJob.Execute();
             Assert.AreEqual(1, backupJob.JobObjects.Count);
             Assert.AreEqual(2, rep.RestorePoints.Count);
@@ -41,12 +40,12 @@ namespace Backups.Tests
         {
             var rep = new GitRepository();
             var backupJob = new BackupJob(rep, new SplitStorage());
-            backupJob.AddObject(@"ayo\123.txt");
-            backupJob.AddObject(@"ayo\321.txt");
+            backupJob.AddObject(@"123.txt");
+            backupJob.AddObject(@"321.txt");
             backupJob.Execute();
             Assert.AreEqual(2, backupJob.JobObjects.Count);
             Assert.AreEqual(1, rep.RestorePoints.Count);
-            backupJob.DeleteObject(@"ayo\321.txt");
+            backupJob.DeleteObject(@"321.txt");
             backupJob.Execute();
             Assert.AreEqual(1, backupJob.JobObjects.Count);
             Assert.AreEqual(2, rep.RestorePoints.Count);

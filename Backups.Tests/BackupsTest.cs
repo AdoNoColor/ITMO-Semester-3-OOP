@@ -14,12 +14,12 @@ namespace Backups.Tests
         {
             var rep = new GitRepository();
             var backupJob = new BackupJob(rep, new SingleStorage());
-            backupJob.AddObject(@"C:\Users\Иванов\ayo\123.txt");
-            backupJob.AddObject(@"C:\Users\Иванов\ayo\321.txt");
+            backupJob.AddObject(@"ayo\123.txt");
+            backupJob.AddObject(@"ayo\321.txt");
             backupJob.Execute();
             Assert.AreEqual(2, backupJob.JobObjects.Count);
             Assert.AreEqual(1, rep.RestorePoints.Count);
-            backupJob.DeleteObject(@"C:\Users\Иванов\ayo\321.txt");
+            backupJob.DeleteObject(@"ayo\321.txt");
             backupJob.Execute();
             Assert.AreEqual(1, backupJob.JobObjects.Count);
             Assert.AreEqual(2, rep.RestorePoints.Count);
@@ -41,12 +41,12 @@ namespace Backups.Tests
         {
             var rep = new GitRepository();
             var backupJob = new BackupJob(rep, new SplitStorage());
-            backupJob.AddObject(@"C:\Users\Иванов\ayo\123.txt");
-            backupJob.AddObject(@"C:\Users\Иванов\ayo\321.txt");
+            backupJob.AddObject(@"ayo\123.txt");
+            backupJob.AddObject(@"ayo\321.txt");
             backupJob.Execute();
             Assert.AreEqual(2, backupJob.JobObjects.Count);
             Assert.AreEqual(1, rep.RestorePoints.Count);
-            backupJob.DeleteObject(@"C:\Users\Иванов\ayo\321.txt");
+            backupJob.DeleteObject(@"ayo\321.txt");
             backupJob.Execute();
             Assert.AreEqual(1, backupJob.JobObjects.Count);
             Assert.AreEqual(2, rep.RestorePoints.Count);

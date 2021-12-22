@@ -27,9 +27,9 @@ namespace Backups.Entities
             JobObjects.Remove(objectName);
         }
 
-        public void Execute()
+        public void Execute(string destination)
         {
-            Repository.CreateRestorePoint(this);
+            Repository.CreateRestorePoint(this, destination);
         }
     }
 }

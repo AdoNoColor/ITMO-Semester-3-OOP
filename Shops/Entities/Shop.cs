@@ -59,15 +59,19 @@ namespace Shops.Entities
 
         public ProductExtra GetItemFromStock(int i)
         {
-            if (_stock[i] == null && i > _stock.Count)
+            if (!Enumerable.Range(0, _stock.Capacity).Contains(i))
+                throw new ShopException("Index out of range!");
+            if (_stock[i] == null)
                 throw new ShopException("No item like this");
-
             return _stock[i];
         }
 
         public void ChangeItemQuantity(int i, int quantity)
         {
-            if (_stock[i] == null && i > _stock.Count)
+            if (!Enumerable.Range(0, _stock.Capacity).Contains(i))
+                throw new ShopException("Index out of range!");
+
+            if (_stock[i] == null)
             {
                 throw new ShopException("No item like this");
             }

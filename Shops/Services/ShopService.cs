@@ -104,7 +104,7 @@ namespace Shops.Services
                     productQuantity++;
                 }
 
-                if (productQuantity != _package.Count)
+                if (!_package.All(t => shop.ProductExists(t.Id) && shop.FindProduct(t.Id).Quantity >= t.Quantity))
                     throw new ShopException("Not enough products or products don't exist!");
 
                 decimal currentTotalAmount = _package.Where(product =>

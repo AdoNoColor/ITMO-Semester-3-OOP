@@ -10,7 +10,7 @@ namespace Shops.Services
         private readonly List<Shop> _shops = new List<Shop>();
         private readonly List<Product> _products = new List<Product>();
         private readonly List<ProductExtra> _deliver = new List<ProductExtra>();
-        private readonly List<ProductExtra> _package = new List<ProductExtra>();
+        internal List<ProductExtra> Package { get; } = new List<ProductExtra>();
 
         public Shop RegisterShop(string address, string name)
         {
@@ -83,37 +83,18 @@ namespace Shops.Services
             if (_products.All(item => item.Id != product.Id))
                 throw new ShopException("No product with the ID like that!");
             var foundProduct = new ProductExtra(product.Name, product.Id, quantity);
-            _package.Add(foundProduct);
+            Package.Add(foundProduct);
         }
 
         public decimal SearchProfitableDeal()
         {
-            if (_package.Count == 0)
+            if (Package.Count == 0)
             {
                 throw new ShopException("No products to search!");
             }
 
-            decimal totalAmount = decimal.MaxValue;
-
-            foreach (Shop shop in _shops)
-            {
-                int productQuantity = 0;
-
-                foreach (ProductExtra unused in _package.Where(t => shop.ProductExists(t.Id) && shop.FindProduct(t.Id).Quantity >= t.Quantity))
-                {
-                    productQuantity++;
-                }
-
-                if (!_package.All(t => shop.ProductExists(t.Id) && shop.FindProduct(t.Id).Quantity >= t.Quantity))
-                    throw new ShopException("Not enough products or products don't exist!");
-
-                decimal currentTotalAmount = _package.Where(product =>
-                    product.Quantity <= shop.FindProduct(product.Id).Quantity).
-                    Sum(product => shop.FindProduct(product.Id).Price * product.Quantity);
-
-                if (currentTotalAmount < totalAmount)
-                    totalAmount = currentTotalAmount;
-            }
+            decimal totalAmount = _shops.Aggregate(decimal.MaxValue, (current, shop) =>
+                shop.FindProfitableDeal(this, current));
 
             if (totalAmount == decimal.MaxValue)
                 throw new ShopException("Something ain't right!");
@@ -123,23 +104,7 @@ namespace Shops.Services
 
         public void BuyProducts(Customer customer, Shop shop)
         {
-            for (int i = 0; i < customer.GetWishlistQuantity(); i++)
-            {
-                for (int j = 0; j < shop.StockQuantity(); j++)
-                {
-                    if (customer.GetItemIdFromWishList(i) == shop.GetItemFromStock(j).Id &&
-                        customer.GetItemQuantityFromWishList(i) <= shop.GetItemFromStock(j).Quantity)
-                    {
-                        if (customer.Balance - (shop.GetItemFromStock(j).Price * customer.GetItemQuantityFromWishList(i)) < 0)
-                        {
-                            throw new ShopException("Not enough money!");
-                        }
-
-                        customer.Payment(shop.GetItemFromStock(j).Price * customer.GetItemQuantityFromWishList(i));
-                        shop.ChangeItemQuantity(j, customer.GetItemQuantityFromWishList(i));
-                    }
-                }
-            }
+            shop.BuyProducts(customer);
         }
     }
 }

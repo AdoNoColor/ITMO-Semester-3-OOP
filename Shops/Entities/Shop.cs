@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Shops.Services;
 using Shops.Tools;
 
 namespace Shops.Entities
@@ -82,6 +83,39 @@ namespace Shops.Entities
             }
 
             _stock[i].Quantity -= quantity;
+        }
+
+        public decimal FindProfitableDeal(ShopService shopService, decimal totalAmount)
+        {
+            if (!shopService.Package.All(t => ProductExists(t.Id) && FindProduct(t.Id).Quantity >= t.Quantity))
+                throw new ShopException("Not enough products or products don't exist!");
+
+            decimal currentTotalAmount = shopService.Package.Where(product =>
+                    product.Quantity <= FindProduct(product.Id).Quantity).
+                Sum(product => FindProduct(product.Id).Price * product.Quantity);
+
+            if (currentTotalAmount < totalAmount)
+                totalAmount = currentTotalAmount;
+            return totalAmount;
+        }
+
+        public void BuyProducts(Customer customer)
+        {
+            for (int i = 0; i < customer.GetWishlistQuantity(); i++)
+            {
+                for (int j = 0; j < StockQuantity(); j++)
+                {
+                    if (customer.GetItemIdFromWishList(i) != GetItemFromStock(j).Id ||
+                        customer.GetItemQuantityFromWishList(i) > GetItemFromStock(j).Quantity) continue;
+                    if (customer.Balance - (GetItemFromStock(j).Price * customer.GetItemQuantityFromWishList(i)) < 0)
+                    {
+                        throw new ShopException("Not enough money!");
+                    }
+
+                    customer.Payment(GetItemFromStock(j).Price * customer.GetItemQuantityFromWishList(i));
+                    ChangeItemQuantity(j, customer.GetItemQuantityFromWishList(i));
+                }
+            }
         }
 
         public int StockQuantity()

@@ -13,9 +13,9 @@ namespace IsuExtra.Entities
             AttachedOGNPCourse = attachedOgnpCourse;
         }
 
-        public OGNPCourse AttachedOGNPCourse { get; set; }
+        public OGNPCourse AttachedOGNPCourse { get; }
         public string Name { get; }
-        public CourseNumber CourseNumber { get; set; }
-        public List<OGNPGroup> OGNPGroups { get; set; } = new List<OGNPGroup>();
+        public CourseNumber CourseNumber { get; }
+        public List<OGNPGroup> OGNPGroups { get; } = new List<OGNPGroup>();
     }
 }

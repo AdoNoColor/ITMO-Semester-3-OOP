@@ -36,17 +36,20 @@ namespace IsuExtra.Services
 
         public bool DoTheyMatch(string nameOne, string nameTwo)
         {
-            var lessonOne = new Lesson();
-            var lessonTwo = new Lesson();
-            foreach (Lesson lesson in AllLessons)
+            Lesson lessonOne = null;
+            Lesson lessonTwo = null;
+
+            foreach (Lesson lesson in AllLessons.Where(lesson => nameOne == lesson.Group))
             {
-                if (nameOne == lesson.Group)
-                    lessonOne = lesson;
-                if (nameTwo == lesson.Group)
-                    lessonTwo = lesson;
+                lessonOne = lesson;
             }
 
-            return lessonOne.StartTime != lessonTwo.StartTime;
+            foreach (Lesson lesson in AllLessons.Where(lesson => nameTwo == lesson.Group))
+            {
+                lessonTwo = lesson;
+            }
+
+            return lessonOne != null && lessonTwo != null && lessonOne.StartTime != lessonTwo.StartTime;
         }
     }
 }

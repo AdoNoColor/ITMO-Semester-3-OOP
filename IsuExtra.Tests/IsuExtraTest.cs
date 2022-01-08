@@ -64,7 +64,7 @@ namespace IsuExtra.Tests
                 someBusinessStuff, CourseNumber.Third);
             OGNPGroup someBusinessStuffGroupTwo = _extraService.AddOgnpGroup("Jay Z 3.1", 
                 30, someBusinessStuffCourseTres);
-            _extraService.SignOne(_max, someBusinessStuffGroup, _lessonService);
+            _extraService.SignStudent(_max, someBusinessStuffGroup, _lessonService);
 
             var timeOne = new DateTime(2021, 10, 24, 8, 20, 0);
             var timeTwo = new DateTime(2021, 10, 24, 10, 0, 0);
@@ -75,12 +75,12 @@ namespace IsuExtra.Tests
             Assert.Contains(_max, someBusinessStuffGroup.Students);
             Assert.Catch<IsuExtraException>(() =>
             {
-                _extraService.SignOne(_max, someBusinessStuffGroupTwo, _lessonService);
+                _extraService.SignStudent(_max, someBusinessStuffGroupTwo, _lessonService);
             });
             
             Assert.Catch<IsuExtraException>(() =>
             {
-                _extraService.SignOne(_martha, anotherBusinessStuffGroup, _lessonService);
+                _extraService.SignStudent(_martha, anotherBusinessStuffGroup, _lessonService);
             });
             
             Assert.AreEqual(CourseNumber.Second, someBusinessStuffCourseDes.CourseNumber);
@@ -95,10 +95,10 @@ namespace IsuExtra.Tests
             OGNPGroup someBusinessStuffGroup = _extraService.AddOgnpGroup("Jay Z 2.1",
                 30, someBusinessStuffCourseDes);
             
-            _extraService.SignOne(_max, someBusinessStuffGroup, _lessonService);
-            _extraService.SignOne(_martha, someBusinessStuffGroup, _lessonService);
+            _extraService.SignStudent(_max, someBusinessStuffGroup, _lessonService);
+            _extraService.SignStudent(_martha, someBusinessStuffGroup, _lessonService);
 
-            _extraService.RemoveOne(someBusinessStuffGroup, _max);
+            _extraService.RemoveStudent(someBusinessStuffGroup, _max);
             Assert.AreEqual(1, someBusinessStuffGroup.Students.Count);
             Assert.Contains(_martha, someBusinessStuffGroup.Students);
         }
@@ -126,15 +126,13 @@ namespace IsuExtra.Tests
             OGNPGroup someBusinessStuffGroup = _extraService.AddOgnpGroup("Jay Z Business Man Course 2.1", 
                 30, someBusinessStuffCourseDes);
             
-            _extraService.SignOne(_max, someBusinessStuffGroup, _lessonService);
-            _extraService.SignOne(_martha, someBusinessStuffGroup, _lessonService);
+            _extraService.SignStudent(_max, someBusinessStuffGroup, _lessonService);
+            _extraService.SignStudent(_martha, someBusinessStuffGroup, _lessonService);
             
-            Assert.AreEqual(2, _extraService.ShowSignedOnes(someBusinessStuffGroup).Count);
-            Assert.AreEqual(null, _mark.OgnpSigned.Item1);
-            Assert.AreEqual(null, _mark.OgnpSigned.Item2);
-            Assert.IsNotNull(_max.OgnpSigned.Item1);
-            Assert.IsNotNull(_martha.OgnpSigned.Item1);
-            Assert.AreEqual(1, _extraService.ShowNotSignedOnes(_m3208).Count);
+            Assert.AreEqual(2, _extraService.ShowSignedStudents(someBusinessStuffGroup).Count);
+            Assert.IsNotNull(_max.OgnpSigned);
+            Assert.IsNotNull(_martha.OgnpSigned);
+            Assert.AreEqual(1, _extraService.ShowNotSignedStudents(_m3208).Count);
         }
     }
 }

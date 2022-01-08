@@ -4,10 +4,6 @@ namespace IsuExtra.Entities
 {
     public class Lesson
     {
-        public Lesson()
-        {
-        }
-
         public Lesson(DateTime startTime, string group, int auditory, string mentor)
         {
             StartTime = startTime;

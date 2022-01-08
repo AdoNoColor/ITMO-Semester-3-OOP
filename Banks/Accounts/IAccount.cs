@@ -6,15 +6,14 @@ namespace Banks.Accounts
 {
     public interface IAccount
     {
-        public Client AttachedClient { get; set; }
-        public Bank AttachedBank { get; set; }
-        public decimal Balance { get; }
-        public DateTime Time { get; set; }
-        public string Id { get; }
-        public void ChangeBalance(decimal amountOfMoney);
-        /* public void SpinTimeMechanism(DateTime newDate); */
-
-        public string GetId();
-        public void SpinTimeMechanism(DateTime oldDate, DateTime newDate);
+        Client AttachedClient { get; set; }
+        Bank AttachedBank { get; set; }
+        decimal Balance { get; }
+        DateTime Time { get; set; }
+        AccountType AccountType { get; }
+        string Id { get; }
+        void ChangeBalance(decimal amountOfMoney);
+        string GetId();
+        void SpinTimeMechanism(DateTime oldDate, DateTime newDate);
     }
 }

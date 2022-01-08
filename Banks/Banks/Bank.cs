@@ -31,7 +31,7 @@ namespace Banks.Banks
         public decimal TrustLimit { get; private set; }
         public decimal CreditLimit { get; }
 
-        public IAccount AddAccount(Client client, string accountType)
+        public IAccount AddAccount(Client client, AccountType accountType)
         {
             if (Clients.All(anotherClient => anotherClient != client))
             {
@@ -40,21 +40,21 @@ namespace Banks.Banks
 
             switch (accountType)
             {
-                case "Debit":
+                case AccountType.Debit:
                 {
                     var account = new Debit(this, client);
                     DebitAccounts.Add(account);
                     return account;
                 }
 
-                case "Credit":
+                case AccountType.Credit:
                 {
                     var account = new Credit(this, client);
                     CreditAccounts.Add(account);
                     return account;
                 }
 
-                case "Deposit":
+                case AccountType.Deposit:
                 {
                     var account = new Deposit(this, client);
                     DepositAccounts.Add(account);
@@ -62,9 +62,7 @@ namespace Banks.Banks
                 }
 
                 default:
-                {
-                    throw new BanksException("No account type like this");
-                }
+                    throw new BanksException("Type of an account does not exist!");
             }
         }
 
@@ -101,12 +99,12 @@ namespace Banks.Banks
             throw new BanksException("No client like this!");
         }
 
-        public Notification SendNotification(string message, string concreteType)
+        public Notification SendNotification(string message, AccountType concreteType)
         {
             var notification = new Notification(this, message);
             switch (concreteType)
             {
-                case "Credit":
+                case AccountType.Credit:
                 {
                     foreach (Debit credit in Clients.SelectMany(client => DebitAccounts.Where(credit => credit.AttachedClient != client)))
                     {
@@ -117,7 +115,7 @@ namespace Banks.Banks
                     break;
                 }
 
-                case "Debit":
+                case AccountType.Debit:
                 {
                     foreach (Debit debit in Clients.SelectMany(client => DebitAccounts.Where(debit => debit.AttachedClient != client)))
                     {
@@ -128,7 +126,7 @@ namespace Banks.Banks
                     break;
                 }
 
-                case "Deposit":
+                case AccountType.Deposit:
                 {
                     foreach (Deposit deposit in Clients.SelectMany(client => DepositAccounts.Where(deposit => deposit.AttachedClient != client)))
                     {
@@ -139,7 +137,7 @@ namespace Banks.Banks
                     break;
                 }
 
-                case "All":
+                case AccountType.All:
                 {
                     foreach (Client client in Clients)
                     {

@@ -2,8 +2,8 @@ namespace Banks.Operations
 {
     public interface IOperation
     {
-        public string Id { get; set; }
-        public bool IsCancelled { get; set; }
-        public abstract void CancelOperation();
+        string Id { get; set; }
+        bool IsCancelled { get; set; }
+        void CancelOperation();
     }
 }

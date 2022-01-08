@@ -143,21 +143,21 @@ namespace Banks.Console_Interface
             {
                 case 1:
                 {
-                    IAccount account = AttachedBank.AddAccount(client, "Debit");
+                    IAccount account = AttachedBank.AddAccount(client, AccountType.Debit);
                     Console.WriteLine($"Account {account.Id} has been successfully created!");
                     break;
                 }
 
                 case 2:
                 {
-                    IAccount account = AttachedBank.AddAccount(client, "Credit");
+                    IAccount account = AttachedBank.AddAccount(client, AccountType.Credit);
                     Console.WriteLine($"Account {account.Id} has been successfully created!");
                     break;
                 }
 
                 case 3:
                 {
-                    IAccount account = AttachedBank.AddAccount(client, "Deposit");
+                    IAccount account = AttachedBank.AddAccount(client, AccountType.Deposit);
                     Console.WriteLine($"Account {account.Id} has been successfully created!");
                     break;
                 }

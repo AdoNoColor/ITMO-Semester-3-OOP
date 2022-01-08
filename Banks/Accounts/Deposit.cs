@@ -14,6 +14,7 @@ namespace Banks.Accounts
             AttachedClient = client;
             Time = CentralBank.CurrentDate;
             FirstReplenishment = false;
+            AccountType = AccountType.Deposit;
         }
 
         public Client AttachedClient { get; set; }
@@ -23,6 +24,7 @@ namespace Banks.Accounts
         public DateTime ExpirationDate { get; private set; }
         public string Id { get; }
         public decimal Percent { get; private set; }
+        public AccountType AccountType { get; }
         private bool FirstReplenishment { get; set; }
 
         public void SetExpirationDate(DateTime expirationDate)

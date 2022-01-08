@@ -13,6 +13,7 @@ namespace Banks.Accounts
             AttachedBank = bank;
             AttachedClient = client;
             Time = CentralBank.CurrentDate;
+            AccountType = AccountType.Debit;
         }
 
         public Client AttachedClient { get; set; }
@@ -20,6 +21,8 @@ namespace Banks.Accounts
         public decimal Balance { get; private set; }
         public DateTime Time { get; set; }
         public string Id { get; }
+
+        public AccountType AccountType { get; }
 
         public string GetId()
         {

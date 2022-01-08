@@ -14,6 +14,7 @@ namespace Banks.Accounts
             AttachedClient = client;
             Time = CentralBank.CurrentDate;
             Limit = AttachedBank.CreditLimit;
+            AccountType = AccountType.Credit;
         }
 
         public Client AttachedClient { get; set; }
@@ -22,6 +23,7 @@ namespace Banks.Accounts
         public decimal Limit { get; private set; }
         public DateTime Time { get; set; }
         public string Id { get; }
+        public AccountType AccountType { get; }
 
         public string GetId()
         {

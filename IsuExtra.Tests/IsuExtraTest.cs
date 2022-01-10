@@ -108,7 +108,7 @@ namespace IsuExtra.Tests
         }
 
         [Test]
-        public void ShowNotSignedAndSignedOnes()
+        public void ShowNotSignedAndSignedStudents()
         {
             OGNPCourse someBusinessStuff = _extraService.AddOgnpCourse("Some Business Stuff", MegaFaculty.FTMI);
             OGNPStream someBusinessStuffCourseDes = _extraService.AddOgnpStream("Some Business Stuff Course Two!", 
@@ -122,7 +122,7 @@ namespace IsuExtra.Tests
             Assert.AreEqual(2, _extraService.ShowSignedStudents(someBusinessStuffGroup).Count);
             Assert.IsNotNull(_max.OgnpSigned);
             Assert.IsNotNull(_martha.OgnpSigned);
-            Assert.AreEqual(1, _extraService.ShowNotSignedStudents(_m3208).Count);
+            Assert.AreEqual(0, _extraService.ShowNotSignedStudents(_m3208).Count);
         }
     }
 }

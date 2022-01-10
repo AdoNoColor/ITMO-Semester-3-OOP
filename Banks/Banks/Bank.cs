@@ -21,9 +21,8 @@ namespace Banks.Banks
         }
 
         public List<Client> Clients { get; set; } = new List<Client>();
-        public List<Credit> CreditAccounts { get; set; } = new List<Credit>();
-        public List<Debit> DebitAccounts { get; set; } = new List<Debit>();
-        public List<Deposit> DepositAccounts { get; set; } = new List<Deposit>();
+
+        public List<Account> Accounts { get; } = new List<Account>();
         public string Name { get; }
         public decimal Limit { get; }
         public decimal Percent { get; private set; }
@@ -31,7 +30,7 @@ namespace Banks.Banks
         public decimal TrustLimit { get; private set; }
         public decimal CreditLimit { get; }
 
-        public IAccount AddAccount(Client client, AccountType accountType)
+        public Account AddAccount(Client client, AccountType accountType)
         {
             if (Clients.All(anotherClient => anotherClient != client))
             {
@@ -43,21 +42,21 @@ namespace Banks.Banks
                 case AccountType.Debit:
                 {
                     var account = new Debit(this, client);
-                    DebitAccounts.Add(account);
+                    Accounts.Add(account);
                     return account;
                 }
 
                 case AccountType.Credit:
                 {
                     var account = new Credit(this, client);
-                    CreditAccounts.Add(account);
+                    Accounts.Add(account);
                     return account;
                 }
 
                 case AccountType.Deposit:
                 {
                     var account = new Deposit(this, client);
-                    DepositAccounts.Add(account);
+                    Accounts.Add(account);
                     return account;
                 }
 
@@ -66,13 +65,13 @@ namespace Banks.Banks
             }
         }
 
-        public void ChangeDepositAccountExpirationDate(IAccount account, DateTime newDate)
+        public void ChangeDepositAccountExpirationDate(Account account, DateTime newDate)
         {
             if (!(account is Deposit)) throw new BanksException("Not that type of account!");
             if (newDate < CentralBank.CurrentDate)
                 throw new BanksException("Incorrect date input!");
 
-            foreach (Deposit deposit in DepositAccounts.Where(deposit => deposit == account))
+            foreach (Account deposit in Accounts.Where(deposit => deposit.Id == account.Id))
             {
                 deposit.SetExpirationDate(newDate);
             }
@@ -104,57 +103,51 @@ namespace Banks.Banks
             var notification = new Notification(this, message);
             switch (concreteType)
             {
-                case AccountType.Credit:
+                case AccountType.All:
                 {
-                    foreach (Debit credit in Clients.SelectMany(client => DebitAccounts.Where(credit => credit.AttachedClient != client)))
+                    foreach (Account account in Accounts)
                     {
-                        credit.AttachedClient.AddTheNotification(notification, this);
-                        return notification;
+                        account.AttachedClient.AddTheNotification(notification, this);
                     }
 
-                    break;
-                }
-
-                case AccountType.Debit:
-                {
-                    foreach (Debit debit in Clients.SelectMany(client => DebitAccounts.Where(debit => debit.AttachedClient != client)))
-                    {
-                        debit.AttachedClient.AddTheNotification(notification, this);
-                        return notification;
-                    }
-
-                    break;
+                    return notification;
                 }
 
                 case AccountType.Deposit:
                 {
-                    foreach (Deposit deposit in Clients.SelectMany(client => DepositAccounts.Where(deposit => deposit.AttachedClient != client)))
+                    foreach (Account account in Accounts.Where(account => account.AccountType == concreteType))
                     {
-                        deposit.AttachedClient.AddTheNotification(notification, this);
-                        return notification;
+                        account.AttachedClient.AddTheNotification(notification, this);
                     }
 
-                    break;
+                    return notification;
                 }
 
-                case AccountType.All:
+                case AccountType.Debit:
                 {
-                    foreach (Client client in Clients)
+                    foreach (Account account in Accounts.Where(account => account.AccountType == concreteType))
                     {
-                        client.AddTheNotification(notification, this);
-                        return notification;
+                        account.AttachedClient.AddTheNotification(notification, this);
                     }
 
-                    break;
+                    return notification;
+                }
+
+                case AccountType.Credit:
+                {
+                    foreach (Account account in Accounts.Where(account => account.AccountType == concreteType))
+                    {
+                        account.AttachedClient.AddTheNotification(notification, this);
+                    }
+
+                    return notification;
                 }
 
                 default:
                 {
-                    throw new BanksException("Incorrect input for ConcreteType");
+                    throw new BanksException("Incorrect input!");
                 }
             }
-
-            return null;
         }
     }
 }

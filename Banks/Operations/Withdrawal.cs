@@ -6,7 +6,7 @@ namespace Banks.Operations
 {
     public class Withdrawal
     {
-        public Withdrawal(IAccount account, decimal amountOfMoney)
+        public Withdrawal(Account account, decimal amountOfMoney)
         {
             Id = Guid.NewGuid().ToString();
             Account = account;
@@ -21,7 +21,7 @@ namespace Banks.Operations
 
         public string Id { get; }
 
-        public IAccount Account { get; }
+        public Account Account { get; }
         public decimal AmountOfMoney { get; }
         public bool IsCancelled { get; private set; }
 

@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using BackupsExtra.Entities;
-using BackupsExtra.MergeAlgorithm;
-using BackupsExtra.Tools;
 
 namespace BackupsExtra.Loggers
 {
@@ -12,88 +10,62 @@ namespace BackupsExtra.Loggers
         {
             if (backupJob.TimeViaLogger == (TimeViaLogger)1)
             {
-                using var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default);
-                sw.WriteLine($"{DateTime.Now}");
+                PrintMessage(backupJob, $"[{DateTime.Now}" + " Backup Job was created!]");
+                return;
             }
 
-            using (var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default))
-            {
-                sw.WriteLine($"Backup Job Created!");
-            }
+            PrintMessage(backupJob, "[Backup Job was created!]");
         }
 
         public void RestorePointCreated(BackupJobExtra backupJob)
         {
             if (backupJob.TimeViaLogger == (TimeViaLogger)1)
             {
-                using var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default);
-                sw.WriteLine($"{DateTime.Now}");
+                PrintMessage(backupJob, $"[{DateTime.Now}" + " Restore Point was created!]");
+                return;
             }
 
-            using (var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default))
-            {
-                sw.WriteLine($"Restore Point was Created!");
-            }
+            PrintMessage(backupJob, "[Restore Point was created!]");
         }
 
         public void JobObjectAdded(BackupJobExtra backupJob)
         {
             if (backupJob.TimeViaLogger == (TimeViaLogger)1)
             {
-                using var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default);
-                sw.WriteLine($"{DateTime.Now}");
+                PrintMessage(backupJob, $"[{DateTime.Now}" + " Job Object Added!]");
+                return;
             }
 
-            Console.WriteLine("Job Object Added!");
+            PrintMessage(backupJob, "[Job Object Added!]");
         }
 
         public void JobObjectRemoved(BackupJobExtra backupJob)
         {
             if (backupJob.TimeViaLogger == (TimeViaLogger)1)
             {
-                using var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default);
-                sw.WriteLine($"{DateTime.Now}");
+                PrintMessage(backupJob, $"[{DateTime.Now}" + " Job Object Removed!]");
+                return;
             }
 
-            using (var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default))
-            {
-                sw.WriteLine("Job Object Removed!");
-            }
+            PrintMessage(backupJob, "[Job Object Removed!]");
         }
 
         public void AlgorithmExecuted(BackupJobExtra backupJob)
         {
             if (backupJob.TimeViaLogger == (TimeViaLogger)1)
             {
-                using var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default);
-                sw.WriteLine($"{DateTime.Now}");
+                PrintMessage(backupJob, $"[{DateTime.Now}" + $" Algorithm {backupJob.LimitBehaivor} Started to work!]");
+                return;
             }
 
+            PrintMessage(backupJob, $"[Algorithm {backupJob.LimitBehaivor} Started to work!]");
+        }
+
+        private void PrintMessage(BackupJobExtra backupJob, string message)
+        {
             using (var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default))
             {
-                sw.WriteLine("Algorithm Started to work!");
-            }
-
-            switch (backupJob.LimitBehaivor)
-            {
-                case LimitBehaivor.MergePoints:
-                {
-                    using var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default);
-                    sw.WriteLine("Type of behaivor: Merge Algorithm");
-
-                    break;
-                }
-
-                case LimitBehaivor.DeletePoints:
-                {
-                    using var sw = new StreamWriter(backupJob.LoggerStatePath, true, System.Text.Encoding.Default);
-                    sw.WriteLine("Type of behaivor: Clean Algorithm");
-
-                    break;
-                }
-
-                default:
-                    throw new BackupsExtraException("Incorrect input!");
+                sw.WriteLine(message);
             }
         }
     }

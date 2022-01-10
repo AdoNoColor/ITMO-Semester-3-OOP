@@ -8,30 +8,21 @@ namespace BackupsExtra.LimitAlgorithms
     {
         public void Execute(BackupJobExtra backupJob)
         {
-            switch (backupJob.LimitBehaivor)
+            backupJob.LimitBehaivor = LimitBehaivor.DeletePoints;
+            if (backupJob.CleanAlgorithm.FindPoints(backupJob).Count != 0)
             {
-                case LimitBehaivor.DeletePoints:
-                {
-                    if (backupJob.CleanAlgorithm.FindPoints(backupJob).Count != 0)
-                    {
-                        backupJob.CleanAlgorithm.StartAlgorithm(backupJob, backupJob.CleanAlgorithm.FindPoints(backupJob));
-                        backupJob.Logger.AlgorithmExecuted(backupJob);
-                    }
+                backupJob.CleanAlgorithm.StartAlgorithm(backupJob, backupJob.CleanAlgorithm.FindPoints(backupJob));
+                backupJob.Logger.AlgorithmExecuted(backupJob);
+            }
+        }
 
-                    break;
-                }
-
-                case LimitBehaivor.MergePoints:
-                {
-                    if (backupJob.CleanAlgorithm.FindPoints(backupJob).Count != 0)
-                    {
-                        var merge = new Merge();
-                        merge.StartAlgorithm(backupJob, backupJob.CleanAlgorithm.FindPoints(backupJob));
-                        backupJob.Logger.AlgorithmExecuted(backupJob);
-                    }
-
-                    break;
-                }
+        public void Execute(BackupJobExtra backupJob, Merge merge)
+        {
+            backupJob.LimitBehaivor = LimitBehaivor.MergePoints;
+            if (backupJob.CleanAlgorithm.FindPoints(backupJob).Count != 0)
+            {
+                merge.StartAlgorithm(backupJob, backupJob.CleanAlgorithm.FindPoints(backupJob));
+                backupJob.Logger.AlgorithmExecuted(backupJob);
             }
         }
     }

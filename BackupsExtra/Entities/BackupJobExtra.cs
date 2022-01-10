@@ -13,22 +13,18 @@ namespace BackupsExtra.Entities
 {
     public class BackupJobExtra : BackupJob
     {
-        public BackupJobExtra(IRepository rep, IAlgorithm usingAlgorithm, ICleanAlgorithm usingCleanAlgorithm)
+        public BackupJobExtra(IRepository rep, IAlgorithm usingAlgorithm, ICleanAlgorithm usingCleanAlgorithm, ILogger logger)
             : base(rep, usingAlgorithm)
         {
             CleanAlgorithm = usingCleanAlgorithm;
-            if (rep is GitRepository)
-                Logger = new GitLogger();
-            if (rep is FileSystemRepository)
-                Logger = new FileSystemLogger();
+            Logger = logger;
         }
 
         public ICleanAlgorithm CleanAlgorithm { get; set; }
         public DateTime RestorePointExpirationDate { get; set; } = DateTime.Now.AddMonths(6);
         public int RestorePointMaxAmount { get; set; } = 2;
-        public HybridOption HybridOption { get; set; } = HybridOption.One;
         public Merge MergeAlgorithm { get; set; }
-        public LimitBehaivor LimitBehaivor { get; set; } = LimitBehaivor.MergePoints;
+        public LimitBehaivor LimitBehaivor { get; set; } = LimitBehaivor.DeletePoints;
         public LimitAlgorithm LimitAlgorithm { get; set; } = new LimitAlgorithm();
 
         public TimeViaLogger TimeViaLogger { get; set; } = TimeViaLogger.No;
@@ -53,6 +49,13 @@ namespace BackupsExtra.Entities
             Repository.CreateRestorePoint(this);
             Logger.RestorePointCreated(this);
             LimitAlgorithm.Execute(this);
+        }
+
+        public void Execute(DateTime timeOfCreation, Merge merge)
+        {
+            Repository.CreateRestorePoint(this, timeOfCreation);
+            Logger.RestorePointCreated(this);
+            LimitAlgorithm.Execute(this, merge);
         }
 
         public void Execute(DateTime timeOfCreation)

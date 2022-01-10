@@ -15,7 +15,6 @@ namespace IsuExtra.Tests
         private GroupExtra _m3208;
         private StudentExtra _max;
         private StudentExtra _martha;
-        private StudentExtra _mark;
 
 
         [SetUp]
@@ -27,7 +26,6 @@ namespace IsuExtra.Tests
             _m3208 = _groupService.AddGroup("M3208", 30);
             _max = _groupService.AddStudent(_m3208,"Maxim");
             _martha = _groupService.AddStudent(_m3208, "Martha");
-            _mark = _groupService.AddStudent(_m3208, "Mark");
         }
 
         [Test]
@@ -58,8 +56,6 @@ namespace IsuExtra.Tests
                 CourseNumber.Second);
             OGNPGroup someBusinessStuffGroup = _extraService.AddOgnpGroup("Jay Z 2.1", 
                 30, someBusinessStuffCourseDes);
-            OGNPGroup anotherBusinessStuffGroup = _extraService.AddOgnpGroup("Jay Z 2.2", 
-                30, someBusinessStuffCourseDes);
             OGNPStream someBusinessStuffCourseTres = _extraService.AddOgnpStream("Course Three!",
                 someBusinessStuff, CourseNumber.Third);
             OGNPGroup someBusinessStuffGroupTwo = _extraService.AddOgnpGroup("Jay Z 3.1", 
@@ -70,19 +66,13 @@ namespace IsuExtra.Tests
             var timeTwo = new DateTime(2021, 10, 24, 10, 0, 0);
             _lessonService.AddLesson(timeOne, _m3208.GroupName, 412, "Ye");
             _lessonService.AddLesson(timeTwo, someBusinessStuffGroup.GroupName, 123, "Obama");
-            _lessonService.AddLesson(timeTwo, anotherBusinessStuffGroup.GroupName, 123, "Mister Hendrix");
 
             Assert.Contains(_max, someBusinessStuffGroup.Students);
             Assert.Catch<IsuExtraException>(() =>
             {
                 _extraService.SignStudent(_max, someBusinessStuffGroupTwo, _lessonService);
             });
-            
-            Assert.Catch<IsuExtraException>(() =>
-            {
-                _extraService.SignStudent(_martha, anotherBusinessStuffGroup, _lessonService);
-            });
-            
+
             Assert.AreEqual(CourseNumber.Second, someBusinessStuffCourseDes.CourseNumber);
         }
 

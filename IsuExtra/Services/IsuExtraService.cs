@@ -60,7 +60,7 @@ namespace IsuExtra.Services
                     if (student.Course != @group.AttachedStream.CourseNumber)
                         throw new IsuExtraException("Courses doesn't match!");
 
-                    if (lessonService.DoTheyMatch(ognpGroup.GroupName, student.GroupName.GroupName))
+                    if (!lessonService.LessonCollision(ognpGroup.GroupName, student.GroupName.GroupName))
                         throw new IsuExtraException("Collusion between lessons!");
 
                     if (student.GroupName.MegaFaculty == ognpGroup.AttachedStream.AttachedOGNPCourse.AttachedFaculty)

@@ -26,24 +26,24 @@ namespace BackupsExtra.LimitAlgorithms.MergeAlgorithm
 
             for (int restorePointCount = 0; restorePointCount < outOfLimitPoints.Count; restorePointCount++)
             {
-                RestorePoint restorePoint1 = backupJob.Repository.RestorePoints[0];
-                RestorePoint restorePoint2 = backupJob.Repository.RestorePoints[1];
+                RestorePoint restorePoint = backupJob.Repository.RestorePoints[0];
+                RestorePoint anotherRestorePoint = backupJob.Repository.RestorePoints[1];
                 var storages = new List<string>();
 
-                foreach (string storage2 in restorePoint2.Storages)
+                foreach (string storage in anotherRestorePoint.Storages)
                 {
-                    storages.AddRange(restorePoint1.Storages.Where(storage1 =>
-                        Path.GetFileName(storage1) != Path.GetFileName(storage2) &&
-                        !restorePoint2.Storages.Contains(Path.GetFileName(storage1))));
+                    storages.AddRange(restorePoint.Storages.Where(anotherStorage =>
+                        Path.GetFileName(anotherStorage) != Path.GetFileName(storage) &&
+                        !anotherRestorePoint.Storages.Contains(Path.GetFileName(anotherStorage))));
                 }
 
-                backupJob.Repository.RestorePoints.Remove(restorePoint1);
+                backupJob.Repository.RestorePoints.Remove(restorePoint);
                 foreach (string storage in storages)
                 {
-                    restorePoint2.Storages.Add(storage);
+                    anotherRestorePoint.Storages.Add(storage);
                 }
 
-                backupJob.Repository.RestorePoints.Remove(restorePoint1);
+                backupJob.Repository.RestorePoints.Remove(restorePoint);
             }
         }
     }

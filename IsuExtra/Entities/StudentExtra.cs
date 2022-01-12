@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Isu.Entities;
 
 namespace IsuExtra.Entities
@@ -22,7 +23,6 @@ namespace IsuExtra.Entities
             Name = name;
             Id = _id;
             Course = groupName.Course;
-            OgnpSigned = (null, null);
         }
 
         public new int Id { get; }
@@ -31,6 +31,6 @@ namespace IsuExtra.Entities
 
         public new CourseNumber Course { get; set; }
 
-        public (string, string) OgnpSigned { get; set; }
+        public List<OGNPGroup> OgnpSigned { get; set; } = new List<OGNPGroup>();
     }
 }

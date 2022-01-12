@@ -25,15 +25,12 @@ namespace IsuExtra.Services
         public OGNPStream AddOgnpStream(string name, OGNPCourse attachedOgnpCourse, CourseNumber courseNumber)
         {
             var stream = new OGNPStream(name, attachedOgnpCourse, courseNumber);
-            if (attachedOgnpCourse.Streams.Any(flow => stream == flow))
+            if (attachedOgnpCourse.Streams.Any(flow => stream.Equals(flow)))
             {
                 throw new IsuExtraException("Stream like this exists!");
             }
 
-            foreach (OGNPCourse course in _allCourses.Where(course => course == attachedOgnpCourse))
-            {
-                course.Streams.Add(stream);
-            }
+            attachedOgnpCourse.Streams.Add(stream);
 
             return stream;
         }
@@ -44,21 +41,17 @@ namespace IsuExtra.Services
 
             if (_allCourses.Where(course => course == attachedStream.AttachedOGNPCourse).
                 Any(course => course.Streams.Where(stream => stream == attachedStream).
-                    Any(stream => stream.OGNPGroups.Any(anothaGroup => @group.GroupName == anothaGroup.GroupName))))
+                    Any(stream => stream.OGNPGroups.Any(anotherGroup => @group.GroupName == anotherGroup.GroupName))))
             {
                 throw new IsuExtraException("Group like this exists!");
             }
 
-            foreach (OGNPStream stream in _allCourses.Where(course => course == attachedStream.AttachedOGNPCourse).
-                SelectMany(course => course.Streams.Where(stream => stream == attachedStream)))
-            {
-                stream.OGNPGroups.Add(@group);
-            }
+            attachedStream.OGNPGroups.Add(@group);
 
             return group;
         }
 
-        public void SignOne(StudentExtra student, OGNPGroup ognpGroup, LessonService lessonService)
+        public void SignStudent(StudentExtra student, OGNPGroup ognpGroup, LessonService lessonService)
         {
             foreach (OGNPStream stream in _allCourses.SelectMany(course => course.Streams))
             {
@@ -67,54 +60,36 @@ namespace IsuExtra.Services
                     if (student.Course != @group.AttachedStream.CourseNumber)
                         throw new IsuExtraException("Courses doesn't match!");
 
-                    if (lessonService.DoTheyMatch(ognpGroup.GroupName, student.GroupName.GroupName))
+                    if (!lessonService.LessonCollision(ognpGroup.GroupName, student.GroupName.GroupName))
                         throw new IsuExtraException("Collusion between lessons!");
-                    @group.Students.Add(student);
-                    if (student.OgnpSigned.Item1 == null)
-                    {
-                        (string, string) ognpSigned = student.OgnpSigned;
-                        ognpSigned.Item1 = ognpGroup.GroupName;
-                        student.OgnpSigned = ognpSigned;
-                        break;
-                    }
 
-                    if (student.OgnpSigned.Item2 == null)
-                    {
-                        (string, string) ognpSigned = student.OgnpSigned;
-                        ognpSigned.Item2 = ognpGroup.GroupName;
-                        student.OgnpSigned = ognpSigned;
-                        break;
-                    }
+                    if (student.GroupName.MegaFaculty == ognpGroup.AttachedStream.AttachedOGNPCourse.AttachedFaculty)
+                        throw new IsuExtraException("The Mega Faculty is the same!");
+
+                    if (ognpGroup.MaxStudents == ognpGroup.Students.Count)
+                        throw new IsuExtraException("The OGNP Group is full!");
+
+                    if (student.OgnpSigned.Count == 2)
+                        throw new IsuExtraException("Cannot sign to more than 2 groups!");
+
+                    group.AddStudent(student);
+                    return;
                 }
             }
+
+            throw new IsuExtraException("ognpGroup hasn't been found!");
         }
 
-        public void RemoveOne(OGNPGroup ognpGroup, StudentExtra student)
+        public void RemoveStudent(OGNPGroup ognpGroup, StudentExtra student)
         {
-            foreach (OGNPGroup @group in _allCourses.SelectMany(course => course.Streams.
-                SelectMany(stream => stream.OGNPGroups.Where(@group => @group == ognpGroup))))
+            foreach (OGNPGroup @group in _allCourses.SelectMany(course => course.Streams.SelectMany(stream =>
+                stream.OGNPGroups.Where(@group => @group == ognpGroup))))
             {
-                foreach (StudentExtra anotherStudent in ognpGroup.Students.
-                    Where(anotherStudent => student == anotherStudent))
-                {
-                    @group.Students.Remove(anotherStudent);
-                    if (anotherStudent.OgnpSigned.Item1.Equals(@group.GroupName))
-                    {
-                        (string, string) signed = anotherStudent.OgnpSigned;
-                        signed.Item1 = null;
-                        anotherStudent.OgnpSigned = signed;
-                        break;
-                    }
-
-                    if (anotherStudent.OgnpSigned.Item2.Equals(@group.GroupName))
-                    {
-                        (string, string) signed = anotherStudent.OgnpSigned;
-                        signed.Item2 = null;
-                        anotherStudent.OgnpSigned = signed;
-                        break;
-                    }
-                }
+                @group.RemoveStudent(student);
+                return;
             }
+
+            throw new IsuExtraException("Student hasn't been found!");
         }
 
         public List<OGNPStream> ShowStreams(OGNPCourse ognpCourse)
@@ -122,16 +97,14 @@ namespace IsuExtra.Services
             return ognpCourse.Streams.ToList();
         }
 
-        public List<Student> ShowSignedOnes(OGNPGroup group)
+        public List<Student> ShowSignedStudents(OGNPGroup group)
         {
             return group.Students.ToList();
         }
 
-        public List<StudentExtra> ShowNotSignedOnes(GroupExtra group)
+        public List<StudentExtra> ShowNotSignedStudents(GroupExtra group)
         {
-            var notSigned = @group.Students.Where(student => student.OgnpSigned.Item1 == null && student.OgnpSigned.Item2 == null).ToList();
-
-            return notSigned.ToList();
+            return @group.Students.Where(student => student.OgnpSigned.Count == 0).ToList();
         }
     }
 }

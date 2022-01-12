@@ -22,9 +22,9 @@ namespace IsuExtra.Services
             AllLessons.Add(lesson);
         }
 
-        public void RemoveLesson(DateTime startTime, string group, int auditory, string mentor)
+        public void RemoveLesson(DateTime startTime, string groupName, int auditory, string mentor)
         {
-            var lesson = new Lesson(startTime, group, auditory, mentor);
+            var lesson = new Lesson(startTime, groupName, auditory, mentor);
 
             if (AllLessons.Any(anotherLesson => anotherLesson == lesson))
             {
@@ -34,19 +34,24 @@ namespace IsuExtra.Services
             throw new IsuExtraException("No lesson to remove!");
         }
 
-        public bool DoTheyMatch(string nameOne, string nameTwo)
+        public bool LessonCollision(string groupNameOne, string groupNameTwo)
         {
-            var lessonOne = new Lesson();
-            var lessonTwo = new Lesson();
+            Lesson lessonOne = null;
+            Lesson lessonTwo = null;
+
             foreach (Lesson lesson in AllLessons)
             {
-                if (nameOne == lesson.Group)
+                if (lesson.GroupName == groupNameOne)
                     lessonOne = lesson;
-                if (nameTwo == lesson.Group)
+
+                if (lesson.GroupName == groupNameTwo)
                     lessonTwo = lesson;
+
+                if (lessonOne != null && lessonTwo != null && lessonOne.StartTime == lessonTwo.StartTime)
+                    return false;
             }
 
-            return lessonOne.StartTime != lessonTwo.StartTime;
+            return true;
         }
     }
 }

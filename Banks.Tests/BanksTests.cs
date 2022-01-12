@@ -22,8 +22,8 @@ namespace Banks.Tests
             builder.SetPassportNumber("3013 456969");
             builder.SetAddress("Kronversky pr., d. 49");
             Client max = builder.GetClient();
-            IAccount account = sberbank.AddAccount(max, AccountType.Debit);
-            Assert.Contains(account, sberbank.DebitAccounts);
+            Account account = sberbank.AddAccount(max, AccountType.Debit);
+            Assert.Contains(account, sberbank.Accounts);
             Assert.Contains(max, sberbank.Clients);
             Assert.Contains(sberbank, CentralBank.Banks);
         }
@@ -49,12 +49,12 @@ namespace Banks.Tests
             builder.SetAddress("Hollywood");
             Client josh = builder.GetClient();
             
-            IAccount maxDebitAccount = sberbank.AddAccount(max, AccountType.Debit);
-            IAccount maxCreditAccount = sberbank.AddAccount(max, AccountType.Credit);
-            IAccount maxDepositAccount = sberbank.AddAccount(max, AccountType.Deposit);
-            IAccount joshDebitAccount = tinkoff.AddAccount(max, AccountType.Debit);
-            IAccount joshCreditAccount = tinkoff.AddAccount(max, AccountType.Credit);
-            IAccount joshDepositAccount = tinkoff.AddAccount(max, AccountType.Deposit);
+            Account maxDebitAccount = sberbank.AddAccount(max, AccountType.Debit);
+            Account maxCreditAccount = sberbank.AddAccount(max, AccountType.Credit);
+            Account maxDepositAccount = sberbank.AddAccount(max, AccountType.Deposit);
+            Account joshDebitAccount = tinkoff.AddAccount(max, AccountType.Debit);
+            Account joshCreditAccount = tinkoff.AddAccount(max, AccountType.Credit);
+            Account joshDepositAccount = tinkoff.AddAccount(max, AccountType.Deposit);
 
             CentralBank.TopUpBalance(maxDebitAccount, 300000);
             Assert.AreEqual(300000, maxDebitAccount.Balance);
@@ -87,9 +87,9 @@ namespace Banks.Tests
             builder.SetPassportNumber("3013 456969");
             builder.SetAddress("Kronversky pr., d. 49");
             Client max = builder.GetClient();
-            IAccount debitAccount = tinkoff.AddAccount(max, AccountType.Debit);
-            IAccount creditAccount = tinkoff.AddAccount(max, AccountType.Credit);
-            IAccount depositAccount = tinkoff.AddAccount(max, AccountType.Deposit);
+            Account debitAccount = tinkoff.AddAccount(max, AccountType.Debit);
+            Account creditAccount = tinkoff.AddAccount(max, AccountType.Credit);
+            Account depositAccount = tinkoff.AddAccount(max, AccountType.Deposit);
             CentralBank.TopUpBalance(debitAccount, 100m);
             Assert.AreEqual(100m, debitAccount.Balance);
             CentralBank.TopUpBalance(creditAccount, 100m);
@@ -110,8 +110,8 @@ namespace Banks.Tests
             builder.SetPassportNumber("3013 456969");
             builder.SetAddress("Kronversky pr., d. 49");
             Client max = builder.GetClient();
-            IAccount debitAccount = tinkoff.AddAccount(max, AccountType.Debit);
-            IAccount creditAccount = tinkoff.AddAccount(max, AccountType.Credit);
+            Account debitAccount = tinkoff.AddAccount(max, AccountType.Debit);
+            Account creditAccount = tinkoff.AddAccount(max, AccountType.Credit);
             max.TurnTheNotificationOn(tinkoff);
             Notification notification = tinkoff.SendNotification("We are sorry, but debit accounts are " +
                                                                  "being closed!", AccountType.All);

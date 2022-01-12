@@ -107,26 +107,10 @@ namespace Banks.Console_Interface
 
         private void ShowAccounts(Client client)
         {
-            foreach (Debit account in AttachedBank.DebitAccounts.Where(account =>
+            foreach (var account in AttachedBank.Accounts.Where(account =>
                 account.AttachedClient == client))
             {
-                Console.WriteLine("Type: Debit\n" +
-                                  $"Id: {account.Id}\n"
-                                  + $"Balance: {account.Balance}");
-            }
-
-            foreach (Credit account in AttachedBank.CreditAccounts.Where(account =>
-                account.AttachedClient == client))
-            {
-                Console.WriteLine("Type: Credit\n" +
-                                  $"Id: {account.Id}\n"
-                                  + $"Balance: {account.Balance}");
-            }
-
-            foreach (Deposit account in AttachedBank.DepositAccounts.Where(account =>
-                account.AttachedClient == client))
-            {
-                Console.WriteLine("Type: Deposit\n" +
+                Console.WriteLine($"Type: {account.AccountType}\n" +
                                   $"Id: {account.Id}\n"
                                   + $"Balance: {account.Balance}");
             }
@@ -143,21 +127,21 @@ namespace Banks.Console_Interface
             {
                 case 1:
                 {
-                    IAccount account = AttachedBank.AddAccount(client, AccountType.Debit);
+                    Account account = AttachedBank.AddAccount(client, AccountType.Debit);
                     Console.WriteLine($"Account {account.Id} has been successfully created!");
                     break;
                 }
 
                 case 2:
                 {
-                    IAccount account = AttachedBank.AddAccount(client, AccountType.Credit);
+                    Account account = AttachedBank.AddAccount(client, AccountType.Credit);
                     Console.WriteLine($"Account {account.Id} has been successfully created!");
                     break;
                 }
 
                 case 3:
                 {
-                    IAccount account = AttachedBank.AddAccount(client, AccountType.Deposit);
+                    Account account = AttachedBank.AddAccount(client, AccountType.Deposit);
                     Console.WriteLine($"Account {account.Id} has been successfully created!");
                     break;
                 }
@@ -172,8 +156,8 @@ namespace Banks.Console_Interface
 
         private void TransferTransaction()
         {
-            IAccount accountFrom = null;
-            IAccount accountTo = null;
+            Account accountFrom = null;
+            Account accountTo = null;
             Console.WriteLine("Please type the Id of your account:");
             string idFrom = Console.ReadLine();
             Console.WriteLine("Please type the Id of an account in which you want to transfer your money:");
@@ -188,31 +172,7 @@ namespace Banks.Console_Interface
             {
                 case 1:
                 {
-                    foreach (Credit account in AttachedBank.CreditAccounts)
-                    {
-                        if (idFrom == account.Id)
-                            accountFrom = account;
-                        if (idTo == account.Id)
-                            accountTo = account;
-                        if (accountFrom != null && accountTo != null)
-                            CentralBank.TransferMoney(accountFrom, accountTo, balance);
-                        Console.WriteLine("Transaction was successful!");
-                        break;
-                    }
-
-                    foreach (Debit account in AttachedBank.DebitAccounts)
-                    {
-                        if (idFrom == account.Id)
-                            accountFrom = account;
-                        if (idTo == account.Id)
-                            accountTo = account;
-                        if (accountFrom != null && accountTo != null)
-                            CentralBank.TransferMoney(accountFrom, accountTo, balance);
-                        Console.WriteLine("Transaction was successful!");
-                        break;
-                    }
-
-                    foreach (Deposit account in AttachedBank.DepositAccounts)
+                    foreach (var account in AttachedBank.Accounts)
                     {
                         if (idFrom == account.Id)
                             accountFrom = account;
@@ -233,7 +193,7 @@ namespace Banks.Console_Interface
                     {
                         foreach (Bank bank in CentralBank.Banks)
                         {
-                            foreach (Credit account in bank.CreditAccounts)
+                            foreach (var account in bank.Accounts)
                             {
                                 if (idFrom == account.Id)
                                     accountFrom = account;
@@ -242,30 +202,6 @@ namespace Banks.Console_Interface
                                 Console.WriteLine("Transaction was successful!");
                                 if (accountFrom == null || accountTo == null) continue;
                                 CentralBank.TransferMoney(accountFrom, accountTo, balance);
-                                break;
-                            }
-
-                            foreach (Debit account in bank.DebitAccounts)
-                            {
-                                if (idFrom == account.Id)
-                                    accountFrom = account;
-                                if (idTo == account.Id)
-                                    accountTo = account;
-                                if (accountFrom == null || accountTo == null) continue;
-                                Console.WriteLine("Transaction was successful!");
-                                CentralBank.TransferMoney(accountFrom, accountTo, balance);
-                                break;
-                            }
-
-                            foreach (Deposit account in bank.DepositAccounts)
-                            {
-                                if (idFrom == account.Id)
-                                    accountFrom = account;
-                                if (idTo == account.Id)
-                                    accountTo = account;
-                                if (accountFrom == null || accountTo == null) continue;
-                                CentralBank.TransferMoney(accountFrom, accountTo, balance);
-                                Console.WriteLine("Transaction was successful!");
                                 break;
                             }
                         }
@@ -283,21 +219,7 @@ namespace Banks.Console_Interface
             string id = Console.ReadLine();
             Console.WriteLine("How much money do you want to add?");
             int balance = int.Parse(Console.ReadLine() ?? string.Empty);
-            foreach (Debit account in AttachedBank.DebitAccounts.Where(account => account.Id == id))
-            {
-                CentralBank.TopUpBalance(account, balance);
-                Console.WriteLine("Transaction was successful!");
-                return;
-            }
-
-            foreach (Credit account in AttachedBank.CreditAccounts.Where(account => account.Id == id))
-            {
-                CentralBank.TopUpBalance(account, balance);
-                Console.WriteLine("Transaction was successful!");
-                return;
-            }
-
-            foreach (Deposit account in AttachedBank.DepositAccounts.Where(account => account.Id == id))
+            foreach (var account in AttachedBank.Accounts.Where(account => account.Id == id))
             {
                 CentralBank.TopUpBalance(account, balance);
                 Console.WriteLine("Transaction was successful!");
@@ -313,21 +235,7 @@ namespace Banks.Console_Interface
             string id = Console.ReadLine();
             Console.WriteLine("How much money do you want to withdraw?");
             int balance = int.Parse(Console.ReadLine() ?? string.Empty);
-            foreach (Debit account in AttachedBank.DebitAccounts.Where(account => account.Id == id))
-            {
-                CentralBank.WithdrawMoney(account, balance);
-                Console.WriteLine("Transaction was successful!");
-                return;
-            }
-
-            foreach (Credit account in AttachedBank.CreditAccounts.Where(account => account.Id == id))
-            {
-                CentralBank.WithdrawMoney(account, balance);
-                Console.WriteLine("Transaction was successful!");
-                return;
-            }
-
-            foreach (Deposit account in AttachedBank.DepositAccounts.Where(account => account.Id == id))
+            foreach (var account in AttachedBank.Accounts.Where(account => account.Id == id))
             {
                 CentralBank.WithdrawMoney(account, balance);
                 Console.WriteLine("Transaction was successful!");

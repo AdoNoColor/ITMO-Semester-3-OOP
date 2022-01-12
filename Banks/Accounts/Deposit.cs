@@ -5,36 +5,27 @@ using Banks.Tools;
 
 namespace Banks.Accounts
 {
-    public class Deposit : IAccount
+    public class Deposit : Account
     {
         public Deposit(Bank bank, Client client)
+        : base(bank, client)
         {
-            Id = Guid.NewGuid().ToString();
-            AttachedBank = bank;
-            AttachedClient = client;
-            Time = CentralBank.CurrentDate;
             FirstReplenishment = false;
             AccountType = AccountType.Deposit;
         }
 
-        public Client AttachedClient { get; set; }
-        public Bank AttachedBank { get; set; }
-        public decimal Balance { get; private set; }
-        public DateTime Time { get; set; }
         public DateTime ExpirationDate { get; private set; }
-        public string Id { get; }
         public decimal Percent { get; private set; }
-        public AccountType AccountType { get; }
         private bool FirstReplenishment { get; set; }
 
-        public void SetExpirationDate(DateTime expirationDate)
+        public override void SetExpirationDate(DateTime expirationDate)
         {
             if (expirationDate < Time)
                 throw new BanksException("Incorrect input");
             ExpirationDate = expirationDate;
         }
 
-        public void ChangeBalance(decimal amountOfMoney)
+        public override void ChangeBalance(decimal amountOfMoney)
         {
             if (FirstReplenishment == false)
             {
@@ -47,12 +38,7 @@ namespace Banks.Accounts
             Balance += amountOfMoney;
         }
 
-        public string GetId()
-        {
-            return Id;
-        }
-
-        public void SpinTimeMechanism(DateTime oldDate, DateTime newDate)
+        public override void SpinTimeMechanism(DateTime oldDate, DateTime newDate)
         {
             ChangeBalance(Balance * (decimal)(newDate - oldDate).TotalDays * Percent);
             Time = newDate;

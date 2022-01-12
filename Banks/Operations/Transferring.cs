@@ -6,7 +6,7 @@ namespace Banks.Operations
 {
     public class Transferring
     {
-        public Transferring(IAccount accountFrom, IAccount accountTo, decimal money)
+        public Transferring(Account accountFrom, Account accountTo, decimal money)
         {
             Id = Guid.NewGuid().ToString();
             AccountFrom = accountFrom;
@@ -21,8 +21,8 @@ namespace Banks.Operations
         }
 
         public string Id { get; }
-        public IAccount AccountFrom { get; }
-        public IAccount AccountTo { get; }
+        public Account AccountFrom { get; }
+        public Account AccountTo { get; }
         public decimal AmountOfMoney { get; }
         public bool IsCancelled { get; private set; }
 

@@ -35,17 +35,7 @@ namespace Banks.Banks
 
             if (CurrentDate.Month == newDate.Month) return;
 
-            foreach (IAccount account in Banks.SelectMany(bank => bank.DebitAccounts))
-            {
-                account.SpinTimeMechanism(CurrentDate, newDate);
-            }
-
-            foreach (IAccount account in Banks.SelectMany(bank => bank.DepositAccounts))
-            {
-                account.SpinTimeMechanism(CurrentDate, newDate);
-            }
-
-            foreach (IAccount account in Banks.SelectMany(bank => bank.CreditAccounts))
+            foreach (Account account in Banks.SelectMany(bank => bank.Accounts))
             {
                 account.SpinTimeMechanism(CurrentDate, newDate);
             }
@@ -53,19 +43,19 @@ namespace Banks.Banks
             CurrentDate = newDate;
         }
 
-        public static Transferring TransferMoney(IAccount accountFrom, IAccount accountTo, decimal amountOfMoney)
+        public static Transferring TransferMoney(Account accountFrom, Account accountTo, decimal amountOfMoney)
         {
             var transaction = new Transferring(accountFrom, accountTo, amountOfMoney);
             return transaction;
         }
 
-        public static Withdrawal WithdrawMoney(IAccount account, decimal amountOfMoney)
+        public static Withdrawal WithdrawMoney(Account account, decimal amountOfMoney)
         {
             var transaction = new Withdrawal(account, amountOfMoney);
             return transaction;
         }
 
-        public static TopUp TopUpBalance(IAccount account, decimal money)
+        public static TopUp TopUpBalance(Account account, decimal money)
         {
             var transaction = new TopUp(account, money);
             return transaction;

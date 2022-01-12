@@ -5,41 +5,30 @@ using Banks.Tools;
 
 namespace Banks.Accounts
 {
-    public class Debit : IAccount
+    public class Debit : Account
     {
         public Debit(Bank bank, Client client)
+            : base(bank, client)
         {
-            Id = Guid.NewGuid().ToString();
-            AttachedBank = bank;
-            AttachedClient = client;
-            Time = CentralBank.CurrentDate;
             AccountType = AccountType.Debit;
         }
 
-        public Client AttachedClient { get; set; }
-        public Bank AttachedBank { get; set; }
-        public decimal Balance { get; private set; }
-        public DateTime Time { get; set; }
-        public string Id { get; }
-
-        public AccountType AccountType { get; }
-
-        public string GetId()
-        {
-            return Id;
-        }
-
-        public void ChangeBalance(decimal amountOfMoney)
+        public override void ChangeBalance(decimal amountOfMoney)
         {
             Balance += amountOfMoney;
             if (Balance < 0)
                 throw new BanksException("You have reached the minus!");
         }
 
-        public void SpinTimeMechanism(DateTime oldDate, DateTime newDate)
+        public override void SpinTimeMechanism(DateTime oldDate, DateTime newDate)
         {
             ChangeBalance(Balance * (decimal)(newDate - oldDate).TotalDays * AttachedBank.Percent);
             Time = newDate;
+        }
+
+        public override void SetExpirationDate(DateTime dateTime)
+        {
+            throw new BanksException("Not this type of an account!");
         }
     }
 }

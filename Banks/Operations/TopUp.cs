@@ -6,7 +6,7 @@ namespace Banks.Operations
 {
     public class TopUp
     {
-        public TopUp(IAccount account, decimal money)
+        public TopUp(Account account, decimal money)
         {
             Id = Guid.NewGuid().ToString();
             if (money < 0)
@@ -18,7 +18,7 @@ namespace Banks.Operations
         }
 
         public decimal Money { get; }
-        public IAccount Account { get; }
+        public Account Account { get; }
         public bool IsCancelled { get; private set; }
         public string Id { get; }
 

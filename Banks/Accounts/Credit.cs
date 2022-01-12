@@ -5,38 +5,24 @@ using Banks.Tools;
 
 namespace Banks.Accounts
 {
-    public class Credit : IAccount
+    public class Credit : Account
     {
         public Credit(Bank bank, Client client)
+            : base(bank, client)
         {
-            Id = Guid.NewGuid().ToString();
-            AttachedBank = bank;
-            AttachedClient = client;
-            Time = CentralBank.CurrentDate;
-            Limit = AttachedBank.CreditLimit;
             AccountType = AccountType.Credit;
+            Limit = AttachedBank.CreditLimit;
         }
 
-        public Client AttachedClient { get; set; }
-        public Bank AttachedBank { get; set; }
-        public decimal Balance { get; private set; }
         public decimal Limit { get; private set; }
-        public DateTime Time { get; set; }
-        public string Id { get; }
-        public AccountType AccountType { get; }
 
-        public string GetId()
-        {
-            return Id;
-        }
-
-        public void ChangeBalance(decimal amountOfMoney)
+        public override void ChangeBalance(decimal amountOfMoney)
         {
             if (amountOfMoney > AttachedBank.TrustLimit && AttachedClient.LevelOfTrust == false)
                 throw new BanksException("Incorrect input for Credit account!");
             if (Balance < 0)
             {
-                Balance += amountOfMoney - (amountOfMoney * (decimal)AttachedBank.Commission);
+                Balance += amountOfMoney - (amountOfMoney * AttachedBank.Commission);
             }
 
             Balance += amountOfMoney;
@@ -44,11 +30,16 @@ namespace Banks.Accounts
                 throw new BanksException("You have reached the limit!");
         }
 
-        public void SpinTimeMechanism(DateTime oldDate, DateTime newDate)
+        public override void SpinTimeMechanism(DateTime oldDate, DateTime newDate)
         {
             ChangeBalance(Balance * AttachedBank.Commission * ((decimal)(newDate - oldDate).TotalDays
                                                                / 30.4m));
             Time = newDate;
+        }
+
+        public override void SetExpirationDate(DateTime dateTime)
+        {
+            throw new BanksException("Not this type of an account!");
         }
     }
 }

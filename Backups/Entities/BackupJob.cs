@@ -17,19 +17,19 @@ namespace Backups.Entities
         public IAlgorithm UsingAlgorithm { get; }
         public IRepository Repository { get; }
 
-        public void AddObject(string objectName)
+        public virtual void AddObject(string objectName)
         {
             JobObjects.Add(objectName);
         }
 
-        public void DeleteObject(string objectName)
+        public virtual void DeleteObject(string objectName)
         {
             JobObjects.Remove(objectName);
         }
 
-        public void Execute(string destination)
+        public virtual void Execute()
         {
-            Repository.CreateRestorePoint(this, destination);
+            Repository.CreateRestorePoint(this);
         }
     }
 }
